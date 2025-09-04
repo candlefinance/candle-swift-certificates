@@ -19,7 +19,6 @@ extension NameConstraintsPolicy {
     /// There's a complex algorithm for doing proper directory name constraints validation.
     /// However, most implementations don't bother, and just directly compare the distinguished
     /// names.
-    @inlinable
     static func directoryNameMatchesConstraint(directoryName: DistinguishedName, constraint: DistinguishedName) -> Bool
     {
         return directoryName == constraint

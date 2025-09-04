@@ -27,7 +27,6 @@ public struct ExtensionRequest: Hashable, Sendable {
     ///
     /// - parameters:
     ///     - extensions: The extensions to attach to this ``ExtensionRequest``.
-    @inlinable
     public init(extensions: Certificate.Extensions) {
         self.extensions = extensions
     }
@@ -37,7 +36,6 @@ public struct ExtensionRequest: Hashable, Sendable {
     /// - parameters:
     ///     - attribute: The attribute to unwrap
     /// - throws: If the attribute is ill-formed, or does not contain an ``ExtensionRequest``.
-    @inlinable
     public init(_ attribute: CertificateSigningRequest.Attribute) throws {
         guard attribute.oid == .CSRAttributes.extensionRequest else {
             throw CertificateError.incorrectOIDForAttribute(
@@ -62,7 +60,6 @@ extension CertificateSigningRequest.Attribute {
     ///
     /// - parameters:
     ///     - extensionRequest: The ``ExtensionRequest`` to wrap.
-    @inlinable
     public init(_ extensionRequest: ExtensionRequest) throws {
         self.init(
             oid: .CSRAttributes.extensionRequest,
@@ -70,24 +67,15 @@ extension CertificateSigningRequest.Attribute {
         )
     }
 }
-
-@usableFromInline
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 struct ExtensionRequestAttribute: Hashable, Sendable, DERImplicitlyTaggable {
-    @inlinable
     static var defaultIdentifier: ASN1Identifier {
         .sequence
     }
-
-    @usableFromInline
     var extensions: Certificate.Extensions
-
-    @inlinable
     init(_ extensionRequest: ExtensionRequest) {
         self.extensions = extensionRequest.extensions
     }
-
-    @inlinable
     init(derEncoded rootNode: ASN1Node, withIdentifier identifier: ASN1Identifier) throws {
         self.extensions = try Certificate.Extensions(
             DER.sequence(
@@ -97,8 +85,6 @@ struct ExtensionRequestAttribute: Hashable, Sendable, DERImplicitlyTaggable {
             )
         )
     }
-
-    @inlinable
     func serialize(into coder: inout DER.Serializer, withIdentifier identifier: ASN1Identifier) throws {
         try coder.serializeSequenceOf(self.extensions, identifier: identifier)
     }

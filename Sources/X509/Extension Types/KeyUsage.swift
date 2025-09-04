@@ -22,11 +22,9 @@ public struct KeyUsage {
     // KeyUsage is only actually 9-bits wide, so we store it in a UInt16 in bits 0 through 8.
     // To avoid the need to do bit swaps, we treat this as though the bits were encoded in ASN.1:
     // bit zero is the highest bit, bit 16 is the lowest.
-    @usableFromInline
     internal var rawValue: UInt16
 
     /// Construct a ``KeyUsage`` extension with no usages set.
-    @inlinable
     public init() {
         self.rawValue = 0
     }
@@ -56,7 +54,6 @@ public struct KeyUsage {
     ///   - decipherOnly: This only has meaning when the `keyAgreement` field is also `true`. When `true` in that
     ///       case, the subject public key may only be used for decrypting data while performing key
     ///       agreement.
-    @inlinable
     public init(
         digitalSignature: Bool = false,
         nonRepudiation: Bool = false,
@@ -86,7 +83,6 @@ public struct KeyUsage {
     /// - Parameter ext: The ``Certificate/Extension`` to unwrap
     /// - Throws: if the ``Certificate/Extension/oid`` is not equal to
     ///     `ASN1ObjectIdentifier.X509ExtensionID.keyUsage`.
-    @inlinable
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
     public init(_ ext: Certificate.Extension) throws {
         guard ext.oid == .X509ExtensionID.keyUsage else {
@@ -103,7 +99,6 @@ public struct KeyUsage {
     /// This is true when the subject public key is used for verifying digital signatures,
     /// other than signatures used in certificates (covered by ``keyCertSign``) or in
     /// CRLs (covered by ``cRLSign``).
-    @inlinable
     public var digitalSignature: Bool {
         get {
             return (self.rawValue & 0x8000) == 0x8000
@@ -121,7 +116,6 @@ public struct KeyUsage {
     /// to provide a non-repudiation service that protects against the signing entity denying
     /// some action. This does not cover signatures used in certificates (covered by ``keyCertSign``)
     /// or in CRLs (``cRLSign``).
-    @inlinable
     public var nonRepudiation: Bool {
         get {
             return (self.rawValue & 0x4000) == 0x4000
@@ -137,7 +131,6 @@ public struct KeyUsage {
 
     /// This is true when the subject public key is used to encrypt private or secret keys, e.g.
     /// for key transport.
-    @inlinable
     public var keyEncipherment: Bool {
         get {
             return (self.rawValue & 0x2000) == 0x2000
@@ -153,7 +146,6 @@ public struct KeyUsage {
 
     /// This is true when the subject public key is used to encrypt raw data directly, without the use
     /// of an intervening symmetric cipher.
-    @inlinable
     public var dataEncipherment: Bool {
         get {
             return (self.rawValue & 0x1000) == 0x1000
@@ -168,7 +160,6 @@ public struct KeyUsage {
     }
 
     /// This is true when the subject public key is used for key agreement.
-    @inlinable
     public var keyAgreement: Bool {
         get {
             return (self.rawValue & 0x0800) == 0x0800
@@ -184,7 +175,6 @@ public struct KeyUsage {
 
     /// This is true when the subject public key is used for verifying signatures on
     /// certificates.
-    @inlinable
     public var keyCertSign: Bool {
         get {
             return (self.rawValue & 0x0400) == 0x0400
@@ -200,7 +190,6 @@ public struct KeyUsage {
 
     /// This is true when the subject public key is used for verifying signatures on
     /// certificate revocation lists.
-    @inlinable
     public var cRLSign: Bool {
         get {
             return (self.rawValue & 0x0200) == 0x0200
@@ -217,7 +206,6 @@ public struct KeyUsage {
     /// This only has meaning when the ``keyAgreement`` field is also `true`. When `true` in that
     /// case, the subject public key may only be used for encrypting data while performing key
     /// agreement.
-    @inlinable
     public var encipherOnly: Bool {
         get {
             return (self.rawValue & 0x0100) == 0x0100
@@ -234,7 +222,6 @@ public struct KeyUsage {
     /// This only has meaning when the ``keyAgreement`` field is also `true`. When `true` in that
     /// case, the subject public key may only be used for decrypting data while performing key
     /// agreement.
-    @inlinable
     public var decipherOnly: Bool {
         get {
             return (self.rawValue & 0x0080) == 0x0080
@@ -247,8 +234,6 @@ public struct KeyUsage {
             }
         }
     }
-
-    @inlinable
     internal static func validateBitString(_ bitstring: ASN1BitString) throws {
         switch bitstring.bytes.count {
         case 0:
@@ -328,7 +313,6 @@ extension Certificate.Extension {
     /// - Parameters:
     ///   - keyUsage: The extension to wrap
     ///   - critical: Whether this extension should have the critical bit set.
-    @inlinable
     public init(_ keyUsage: KeyUsage, critical: Bool) throws {
         let asn1Representation = ASN1BitString(keyUsage)
         var serializer = DER.Serializer()
@@ -345,7 +329,6 @@ extension KeyUsage: CertificateExtensionConvertible {
 }
 
 extension UInt16 {
-    @inlinable
     init(_ bitString: ASN1BitString) {
         switch bitString.bytes.count {
         case 0:
@@ -362,7 +345,6 @@ extension UInt16 {
 }
 
 extension ASN1BitString {
-    @inlinable
     init(_ ext: KeyUsage) {
         if ext.decipherOnly {
             // We need two bytes here.

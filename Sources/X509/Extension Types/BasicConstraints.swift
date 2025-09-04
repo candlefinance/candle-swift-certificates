@@ -35,7 +35,6 @@ public enum BasicConstraints {
     /// - Parameter ext: The ``Certificate/Extension`` to unwrap
     /// - Throws: if the ``Certificate/Extension/oid`` is not equal to
     ///     `ASN1ObjectIdentifier.X509ExtensionID.basicConstraints`.
-    @inlinable
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
     public init(_ ext: Certificate.Extension) throws {
         guard ext.oid == .X509ExtensionID.basicConstraints else {
@@ -83,7 +82,6 @@ extension Certificate.Extension {
     /// - Parameters:
     ///   - basicConstraints: The extension to wrap
     ///   - critical: Whether this extension should have the critical bit set.
-    @inlinable
     public init(_ basicConstraints: BasicConstraints, critical: Bool) throws {
         let asn1Representation = BasicConstraintsValue(basicConstraints)
         var serializer = DER.Serializer()
@@ -100,20 +98,12 @@ extension BasicConstraints: CertificateExtensionConvertible {
 }
 
 // MARK: ASN1 helpers
-@usableFromInline
 struct BasicConstraintsValue: DERImplicitlyTaggable, Sendable {
-    @inlinable
     static var defaultIdentifier: ASN1Identifier {
         .sequence
     }
-
-    @usableFromInline
     var isCA: Bool
-
-    @usableFromInline
     var pathLenConstraint: Int?
-
-    @inlinable
     init(isCA: Bool, pathLenConstraint: Int?) throws {
         self.isCA = isCA
         self.pathLenConstraint = pathLenConstraint
@@ -126,8 +116,6 @@ struct BasicConstraintsValue: DERImplicitlyTaggable, Sendable {
             )
         }
     }
-
-    @inlinable
     init(_ ext: BasicConstraints) {
         switch ext {
         case .isCertificateAuthority(maxPathLength: let maxPathLen):
@@ -138,8 +126,6 @@ struct BasicConstraintsValue: DERImplicitlyTaggable, Sendable {
             self.pathLenConstraint = nil
         }
     }
-
-    @inlinable
     init(derEncoded rootNode: ASN1Node, withIdentifier identifier: ASN1Identifier) throws {
         self = try DER.sequence(rootNode, identifier: identifier) { nodes in
             let isCA: Bool = try DER.decodeDefault(&nodes, defaultValue: false)
@@ -147,8 +133,6 @@ struct BasicConstraintsValue: DERImplicitlyTaggable, Sendable {
             return try BasicConstraintsValue(isCA: isCA, pathLenConstraint: pathLenConstraint)
         }
     }
-
-    @inlinable
     func serialize(into coder: inout DER.Serializer, withIdentifier identifier: ASN1Identifier) throws {
         try coder.appendConstructedNode(identifier: identifier) { coder in
             if self.isCA != false {

@@ -27,10 +27,7 @@ import SwiftASN1
 /// ```
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 public struct AnyPolicy: VerifierPolicy {
-    @usableFromInline
     var policy: any VerifierPolicy
-
-    @inlinable
     /// Erases the type of some ``VerifierPolicy`` to ``AnyPolicy``.
     /// - Parameter policy: the concrete ``VerifierPolicy``
     public init(_ policy: some VerifierPolicy) {
@@ -39,17 +36,12 @@ public struct AnyPolicy: VerifierPolicy {
 
     /// Erases the type of some ``VerifierPolicy`` to ``AnyPolicy``.
     /// - Parameter makePolicy: the ``VerifierPolicy`` constructed using the ``PolicyBuilder`` DSL.
-    @inlinable
     public init(@PolicyBuilder makePolicy: () throws -> some VerifierPolicy) rethrows {
         self.init(try makePolicy())
     }
-
-    @inlinable
     public var verifyingCriticalExtensions: [SwiftASN1.ASN1ObjectIdentifier] {
         policy.verifyingCriticalExtensions
     }
-
-    @inlinable
     public mutating func chainMeetsPolicyRequirements(chain: UnverifiedCertificateChain) async -> PolicyEvaluationResult
     {
         await policy.chainMeetsPolicyRequirements(chain: chain)

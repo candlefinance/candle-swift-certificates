@@ -20,10 +20,7 @@ extension Certificate {
     /// all use today. In very rare cases X.509v1 certificates can be found, but they should be avoided in
     /// almost all cases.
     public struct Version {
-        @usableFromInline
         var rawValue: Int
-
-        @inlinable
         init(rawValue: Int) {
             self.rawValue = rawValue
         }
@@ -44,7 +41,6 @@ extension Certificate.Version: Sendable {}
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension Certificate.Version: Comparable {
-    @inlinable
     public static func < (lhs: Certificate.Version, rhs: Certificate.Version) -> Bool {
         lhs.rawValue < rhs.rawValue
     }

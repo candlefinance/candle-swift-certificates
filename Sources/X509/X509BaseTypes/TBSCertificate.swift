@@ -36,48 +36,22 @@ import SwiftASN1
 // UniqueIdentifier  ::=  BIT STRING
 //
 // Extensions  ::=  SEQUENCE SIZE (1..MAX) OF Extension
-@usableFromInline
 typealias UniqueIdentifier = ASN1BitString
-
-@usableFromInline
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 struct TBSCertificate: DERImplicitlyTaggable, Hashable, Sendable {
-    @inlinable
     static var defaultIdentifier: ASN1Identifier {
         .sequence
     }
-
-    @usableFromInline
     var version: Certificate.Version
-
-    @usableFromInline
     var serialNumber: Certificate.SerialNumber
-
-    @usableFromInline
     var signature: Certificate.SignatureAlgorithm
-
-    @usableFromInline
     var issuer: DistinguishedName
-
-    @usableFromInline
     var validity: Validity
-
-    @usableFromInline
     var subject: DistinguishedName
-
-    @usableFromInline
     var publicKey: Certificate.PublicKey
-
-    @usableFromInline
     var issuerUniqueID: UniqueIdentifier?
-
-    @usableFromInline
     var subjectUniqueID: UniqueIdentifier?
-
-    @usableFromInline
     var extensions: Certificate.Extensions
-
-    @inlinable
     internal init(
         version: Certificate.Version,
         serialNumber: Certificate.SerialNumber,
@@ -101,8 +75,6 @@ struct TBSCertificate: DERImplicitlyTaggable, Hashable, Sendable {
         self.subjectUniqueID = subjectUniqueID
         self.extensions = extensions
     }
-
-    @inlinable
     init(derEncoded rootNode: ASN1Node, withIdentifier identifier: ASN1Identifier) throws {
         self = try DER.sequence(rootNode, identifier: identifier) { nodes in
             let version = try DER.decodeDefaultExplicitlyTagged(
@@ -145,8 +117,6 @@ struct TBSCertificate: DERImplicitlyTaggable, Hashable, Sendable {
             )
         }
     }
-
-    @inlinable
     func serialize(into coder: inout DER.Serializer, withIdentifier identifier: ASN1Identifier) throws {
         try coder.appendConstructedNode(identifier: identifier) { coder in
             if self.version != .v1 {

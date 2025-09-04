@@ -26,15 +26,12 @@ import SwiftASN1
 ///
 /// Note that these upper bounds are measured in _characters_, not bytes.
 ///
-@usableFromInline
 enum DirectoryString: DERParseable, DERSerializable, Hashable, Sendable {
     case teletexString(ASN1TeletexString)
     case printableString(ASN1PrintableString)
     case universalString(ASN1UniversalString)
     case utf8String(ASN1UTF8String)
     case bmpString(ASN1BMPString)
-
-    @inlinable
     init(derEncoded rootNode: ASN1Node) throws {
         switch rootNode.identifier {
         case .teletexString:
@@ -51,8 +48,6 @@ enum DirectoryString: DERParseable, DERSerializable, Hashable, Sendable {
             throw ASN1Error.unexpectedFieldType(rootNode.identifier)
         }
     }
-
-    @inlinable
     func serialize(into coder: inout DER.Serializer) throws {
         switch self {
         case .teletexString(let string):

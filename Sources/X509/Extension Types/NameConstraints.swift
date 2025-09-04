@@ -27,55 +27,35 @@ import SwiftASN1
 public struct NameConstraints {
     public struct DNSNames: Hashable, Sendable, Collection, ExpressibleByArrayLiteral, CustomStringConvertible {
         public typealias Element = String
-
-        @inlinable
         public static func == (lhs: Self, rhs: Self) -> Bool {
             lhs.elementsEqual(rhs)
         }
-
-        @usableFromInline
         var subtrees: [GeneralName]
-
-        @inlinable
         public var description: String {
             "[\(self.joined(separator: ", "))]"
         }
-
-        @inlinable
         init(subtrees: [GeneralName]) {
             self.subtrees = subtrees
         }
-
-        @inlinable
         public init(_ elements: some Sequence<String>) {
             self.subtrees = elements.map { .dnsName($0) }
         }
-
-        @inlinable
         public init(arrayLiteral elements: String...) {
             self.init(elements)
         }
-
-        @inlinable
         public func hash(into hasher: inout Hasher) {
             hasher.combine(contentsOf: self)
         }
 
         public struct Index: Comparable, Sendable {
-            @inlinable
             public static func < (lhs: Self, rhs: Self) -> Bool {
                 lhs.wrapped < rhs.wrapped
             }
-            @usableFromInline
             var wrapped: Int
-
-            @inlinable
             init(_ wrapped: Int) {
                 self.wrapped = wrapped
             }
         }
-
-        @inlinable
         public var startIndex: Index {
             Index(
                 self.subtrees.firstIndex(where: {
@@ -86,13 +66,9 @@ public struct NameConstraints {
                 }) ?? self.subtrees.endIndex
             )
         }
-
-        @inlinable
         public var endIndex: Index {
             Index(self.subtrees.endIndex)
         }
-
-        @inlinable
         public func index(after i: Index) -> Index {
             Index(
                 self.subtrees[i.wrapped...].dropFirst().firstIndex(where: {
@@ -103,16 +79,12 @@ public struct NameConstraints {
                 }) ?? self.subtrees.endIndex
             )
         }
-
-        @inlinable
         public subscript(position: Index) -> String {
             guard case .dnsName(let name) = self.subtrees[position.wrapped] else {
                 fatalError("index \(position) is not a valid index for \(Self.self)")
             }
             return name
         }
-
-        @inlinable
         var filtered: some Sequence<GeneralName> {
             self.subtrees.lazy.filter {
                 guard case .dnsName = $0 else {
@@ -124,54 +96,35 @@ public struct NameConstraints {
     }
 
     public struct IPRanges: Hashable, Sendable, Collection, ExpressibleByArrayLiteral, CustomStringConvertible {
-        @inlinable
         public static func == (lhs: Self, rhs: Self) -> Bool {
             lhs.elementsEqual(rhs)
         }
-
-        @usableFromInline
         var subtrees: [GeneralName]
-
-        @inlinable
         public var description: String {
             "[\(self.lazy.map { String(describing: $0.bytes) }.joined(separator: ", "))]"
         }
-
-        @inlinable
         init(subtrees: [GeneralName]) {
             self.subtrees = subtrees
         }
-
-        @inlinable
         public init(_ elements: some Sequence<ASN1OctetString>) {
             self.subtrees = elements.map { .ipAddress($0) }
         }
-
-        @inlinable
         public init(arrayLiteral elements: ASN1OctetString...) {
             self.init(elements)
         }
-
-        @inlinable
         public func hash(into hasher: inout Hasher) {
             hasher.combine(contentsOf: self)
         }
 
         public struct Index: Comparable, Sendable {
-            @inlinable
             public static func < (lhs: Self, rhs: Self) -> Bool {
                 lhs.wrapped < rhs.wrapped
             }
-            @usableFromInline
             var wrapped: Int
-
-            @inlinable
             init(_ wrapped: Int) {
                 self.wrapped = wrapped
             }
         }
-
-        @inlinable
         public var startIndex: Index {
             Index(
                 self.subtrees.firstIndex(where: {
@@ -182,13 +135,9 @@ public struct NameConstraints {
                 }) ?? self.subtrees.endIndex
             )
         }
-
-        @inlinable
         public var endIndex: Index {
             Index(self.subtrees.endIndex)
         }
-
-        @inlinable
         public func index(after i: Index) -> Index {
             Index(
                 self.subtrees[i.wrapped...].dropFirst().firstIndex(where: {
@@ -199,16 +148,12 @@ public struct NameConstraints {
                 }) ?? self.subtrees.endIndex
             )
         }
-
-        @inlinable
         public subscript(position: Index) -> ASN1OctetString {
             guard case .ipAddress(let ipAddress) = self.subtrees[position.wrapped] else {
                 fatalError("index \(position) is not a valid index for \(Self.self)")
             }
             return ipAddress
         }
-
-        @inlinable
         var filtered: some Sequence<GeneralName> {
             self.subtrees.lazy.filter {
                 guard case .ipAddress = $0 else {
@@ -220,54 +165,35 @@ public struct NameConstraints {
     }
 
     public struct EmailAddresses: Hashable, Sendable, Collection, ExpressibleByArrayLiteral, CustomStringConvertible {
-        @inlinable
         public static func == (lhs: Self, rhs: Self) -> Bool {
             lhs.elementsEqual(rhs)
         }
-
-        @usableFromInline
         var subtrees: [GeneralName]
-
-        @inlinable
         public var description: String {
             "[\(self.joined(separator: ", "))]"
         }
-
-        @inlinable
         init(subtrees: [GeneralName]) {
             self.subtrees = subtrees
         }
-
-        @inlinable
         public init(_ elements: some Sequence<String>) {
             self.subtrees = elements.map { .rfc822Name($0) }
         }
-
-        @inlinable
         public init(arrayLiteral elements: String...) {
             self.init(elements)
         }
-
-        @inlinable
         public func hash(into hasher: inout Hasher) {
             hasher.combine(contentsOf: self)
         }
 
         public struct Index: Comparable, Sendable {
-            @inlinable
             public static func < (lhs: Self, rhs: Self) -> Bool {
                 lhs.wrapped < rhs.wrapped
             }
-            @usableFromInline
             var wrapped: Int
-
-            @inlinable
             init(_ wrapped: Int) {
                 self.wrapped = wrapped
             }
         }
-
-        @inlinable
         public var startIndex: Index {
             Index(
                 self.subtrees.firstIndex(where: {
@@ -278,13 +204,9 @@ public struct NameConstraints {
                 }) ?? self.subtrees.endIndex
             )
         }
-
-        @inlinable
         public var endIndex: Index {
             Index(self.subtrees.endIndex)
         }
-
-        @inlinable
         public func index(after i: Index) -> Index {
             Index(
                 self.subtrees[i.wrapped...].dropFirst().firstIndex(where: {
@@ -295,16 +217,12 @@ public struct NameConstraints {
                 }) ?? self.subtrees.endIndex
             )
         }
-
-        @inlinable
         public subscript(position: Index) -> String {
             guard case .rfc822Name(let emailAddress) = self.subtrees[position.wrapped] else {
                 fatalError("index \(position) is not a valid index for \(Self.self)")
             }
             return emailAddress
         }
-
-        @inlinable
         var filtered: some Sequence<GeneralName> {
             self.subtrees.lazy.filter {
                 guard case .rfc822Name = $0 else {
@@ -316,54 +234,35 @@ public struct NameConstraints {
     }
 
     public struct URIDomains: Hashable, Sendable, Collection, ExpressibleByArrayLiteral, CustomStringConvertible {
-        @inlinable
         public static func == (lhs: Self, rhs: Self) -> Bool {
             lhs.elementsEqual(rhs)
         }
-
-        @usableFromInline
         var subtrees: [GeneralName]
-
-        @inlinable
         public var description: String {
             "[\(self.joined(separator: ", "))]"
         }
-
-        @inlinable
         init(subtrees: [GeneralName]) {
             self.subtrees = subtrees
         }
-
-        @inlinable
         public init(_ elements: some Sequence<String>) {
             self.subtrees = elements.map { .uniformResourceIdentifier($0) }
         }
-
-        @inlinable
         public init(arrayLiteral elements: String...) {
             self.init(elements)
         }
-
-        @inlinable
         public func hash(into hasher: inout Hasher) {
             hasher.combine(contentsOf: self)
         }
 
         public struct Index: Comparable, Sendable {
-            @inlinable
             public static func < (lhs: Self, rhs: Self) -> Bool {
                 lhs.wrapped < rhs.wrapped
             }
-            @usableFromInline
             var wrapped: Int
-
-            @inlinable
             init(_ wrapped: Int) {
                 self.wrapped = wrapped
             }
         }
-
-        @inlinable
         public var startIndex: Index {
             Index(
                 self.subtrees.firstIndex(where: {
@@ -374,13 +273,9 @@ public struct NameConstraints {
                 }) ?? self.subtrees.endIndex
             )
         }
-
-        @inlinable
         public var endIndex: Index {
             Index(self.subtrees.endIndex)
         }
-
-        @inlinable
         public func index(after i: Index) -> Index {
             Index(
                 self.subtrees[i.wrapped...].dropFirst().firstIndex(where: {
@@ -391,16 +286,12 @@ public struct NameConstraints {
                 }) ?? self.subtrees.endIndex
             )
         }
-
-        @inlinable
         public subscript(position: Index) -> String {
             guard case .uniformResourceIdentifier(let uri) = self.subtrees[position.wrapped] else {
                 fatalError("index \(position) is not a valid index for \(Self.self)")
             }
             return uri
         }
-
-        @inlinable
         var filtered: some Sequence<GeneralName> {
             self.subtrees.lazy.filter {
                 guard case .uniformResourceIdentifier = $0 else {
@@ -610,7 +501,6 @@ public struct NameConstraints {
     ///   - excludedEmailAddresses: The email address trees that are forbidden in certificates issued by this CA.
     ///   - permittedURIDomains: The URI domains that are permitted in certificates issued by this CA.
     ///   - forbiddenURIDomains: The URI domains that are forbidden in certificates issued by this CA.
-    @inlinable
     public init(
         permittedDNSDomains: some Sequence<String> = [],
         excludedDNSDomains: some Sequence<String> = [],
@@ -647,7 +537,6 @@ public struct NameConstraints {
     /// - Parameters:
     ///   - permittedSubtrees: The complete set of permitted subtrees in ``GeneralName`` form.
     ///   - excludedSubtrees: The complete set of excluded subtrees in ``GeneralName`` form.
-    @inlinable
     public init(
         permittedSubtrees: [GeneralName] = [],
         excludedSubtrees: [GeneralName] = []
@@ -662,7 +551,6 @@ public struct NameConstraints {
     /// - Parameter ext: The ``Certificate/Extension`` to unwrap
     /// - Throws: if the ``Certificate/Extension/oid`` is not equal to
     ///     `ASN1ObjectIdentifier.X509ExtensionID.nameConstraints`.
-    @inlinable
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
     public init(_ ext: Certificate.Extension) throws {
         guard ext.oid == .X509ExtensionID.nameConstraints else {
@@ -682,7 +570,6 @@ public struct NameConstraints {
 }
 
 extension Hasher {
-    @inlinable
     mutating func combine(contentsOf elements: some Sequence<some Hashable>) {
         for element in elements {
             self.combine(element)
@@ -730,7 +617,6 @@ extension Certificate.Extension {
     /// - Parameters:
     ///   - nameConstraints: The extension to wrap
     ///   - critical: Whether this extension should have the critical bit set.
-    @inlinable
     public init(_ nameConstraints: NameConstraints, critical: Bool) throws {
         let asn1Representation = NameConstraintsValue(nameConstraints)
         var serializer = DER.Serializer()
@@ -747,27 +633,17 @@ extension NameConstraints: CertificateExtensionConvertible {
 }
 
 // MARK: ASN1 Helpers
-@usableFromInline
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 struct NameConstraintsValue: DERImplicitlyTaggable, Sendable {
-    @inlinable
     static var defaultIdentifier: ASN1Identifier {
         .sequence
     }
-
-    @usableFromInline
     var permittedSubtrees: [GeneralName]?
-
-    @usableFromInline
     var excludedSubtrees: [GeneralName]?
-
-    @inlinable
     init(permittedSubtrees: [GeneralName]?, excludedSubtrees: [GeneralName]?) {
         self.permittedSubtrees = permittedSubtrees
         self.excludedSubtrees = excludedSubtrees
     }
-
-    @inlinable
     init(_ ext: NameConstraints) {
         if !ext.permittedSubtrees.isEmpty {
             self.permittedSubtrees = ext.permittedSubtrees
@@ -776,8 +652,6 @@ struct NameConstraintsValue: DERImplicitlyTaggable, Sendable {
             self.excludedSubtrees = ext.excludedSubtrees
         }
     }
-
-    @inlinable
     init(derEncoded rootNode: ASN1Node, withIdentifier identifier: ASN1Identifier) throws {
         self = try DER.sequence(rootNode, identifier: identifier) { nodes in
             let permittedSubtrees: GeneralSubtrees? = try DER.optionalImplicitlyTagged(
@@ -795,8 +669,6 @@ struct NameConstraintsValue: DERImplicitlyTaggable, Sendable {
             )
         }
     }
-
-    @inlinable
     func serialize(into coder: inout DER.Serializer, withIdentifier identifier: ASN1Identifier) throws {
         try coder.appendConstructedNode(identifier: identifier) { coder in
             try coder.serializeOptionalImplicitlyTagged(
@@ -836,22 +708,14 @@ struct NameConstraintsValue: DERImplicitlyTaggable, Sendable {
 // literally mirror that in Swift land, but at the top level we want to hold [GeneralName], so producing
 // [GeneralSubtree] will force a heap allocation. Instead, we inline the definition of GeneralSubtree into
 // GeneralSubtrees, to avoid the extra allocation.
-@usableFromInline
 struct GeneralSubtrees: DERImplicitlyTaggable, Sendable {
-    @inlinable
     static var defaultIdentifier: ASN1Identifier {
         .sequence
     }
-
-    @usableFromInline
     var base: [GeneralName]
-
-    @inlinable
     init(_ base: [GeneralName]) {
         self.base = base
     }
-
-    @inlinable
     init(derEncoded rootNode: ASN1Node, withIdentifier identifier: ASN1Identifier) throws {
         self.base = try DER.sequence(rootNode, identifier: identifier) { nodes in
             var names: [GeneralName] = []
@@ -864,8 +728,6 @@ struct GeneralSubtrees: DERImplicitlyTaggable, Sendable {
             return names
         }
     }
-
-    @inlinable
     func serialize(into coder: inout DER.Serializer, withIdentifier identifier: ASN1Identifier) throws {
         try coder.appendConstructedNode(identifier: identifier) { coder in
             for name in self.base {

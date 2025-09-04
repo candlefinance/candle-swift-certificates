@@ -22,18 +22,14 @@
 /// acquire/release the lock in the correct place. ``LockedValueBox`` makes
 /// that much easier.
 struct LockedValueBox<Value> {
-
-    @usableFromInline
     internal let _storage: LockStorage<Value>
 
     /// Initialize the `Value`.
-    @inlinable
     init(_ value: Value) {
         self._storage = .create(value: value)
     }
 
     /// Access the `Value`, allowing mutation of it.
-    @inlinable
     func withLockedValue<T>(_ mutate: (inout Value) throws -> T) rethrows -> T {
         try self._storage.withLockedValue(mutate)
     }
@@ -49,17 +45,14 @@ struct LockedValueBox<Value> {
 
     /// Provides an unsafe view over the lock and its value.
     struct Unsafe {
-        @usableFromInline
         let _storage: LockStorage<Value>
 
         /// Manually acquire the lock.
-        @inlinable
         func lock() {
             self._storage.lock()
         }
 
         /// Manually release the lock.
-        @inlinable
         func unlock() {
             self._storage.unlock()
         }
@@ -68,7 +61,6 @@ struct LockedValueBox<Value> {
         ///
         /// - Parameter mutate: A closure with scoped access to the value.
         /// - Returns: The result of the `mutate` closure.
-        @inlinable
         func withValueAssumingLockIsAcquired<Result>(
             _ mutate: (_ value: inout Value) throws -> Result
         ) rethrows -> Result {

@@ -24,12 +24,9 @@ public struct CommonName: RelativeDistinguishedNameConvertible, Sendable {
     /// Construct a new common name
     ///
     /// - Parameter name: The value of the common name
-    @inlinable
     public init(_ name: String) {
         self.name = name
     }
-
-    @inlinable
     public func makeRDN() throws -> RelativeDistinguishedName {
         return RelativeDistinguishedName(
             .init(type: .RDNAttributeType.commonName, utf8String: name)

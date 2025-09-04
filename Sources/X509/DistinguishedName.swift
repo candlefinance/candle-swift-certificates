@@ -81,13 +81,11 @@ import SwiftASN1
 ///
 /// This convenient shorthand is particularly valuable in testing, as well as in code that needs to generate certificates or CSRs.
 public struct DistinguishedName {
-    @usableFromInline
     var rdns: [RelativeDistinguishedName]
 
     /// Construct a ``DistinguishedName`` from a sequence of ``RelativeDistinguishedName``.
     ///
     /// - Parameter rdns: The elements of this ``DistinguishedName``.
-    @inlinable
     public init<RDNSequence: Sequence>(_ rdns: RDNSequence) where RDNSequence.Element == RelativeDistinguishedName {
         self.rdns = Array(rdns)
     }
@@ -98,14 +96,12 @@ public struct DistinguishedName {
     /// transparently.
     ///
     /// - Parameter attributes: The sequence of ``RelativeDistinguishedName/Attribute``s that make up the ``DistinguishedName``.
-    @inlinable
     public init<AttributeSequence: Sequence>(_ attributes: AttributeSequence) throws
     where AttributeSequence.Element == RelativeDistinguishedName.Attribute {
         self.rdns = attributes.map { RelativeDistinguishedName($0) }
     }
 
     /// Construct a new empty ``DistinguishedName``.
-    @inlinable
     public init() {
         self.rdns = []
     }
@@ -125,7 +121,6 @@ public struct DistinguishedName {
     /// ```
     ///
     /// - Parameter builder: The ``DistinguishedNameBuilder`` block.
-    @inlinable
     public init(@DistinguishedNameBuilder builder: () throws -> Result<DistinguishedName, any Error>) throws {
         self = try builder().get()
     }
@@ -136,17 +131,12 @@ extension DistinguishedName: Hashable {}
 extension DistinguishedName: Sendable {}
 
 extension DistinguishedName: RandomAccessCollection, MutableCollection, RangeReplaceableCollection {
-    @inlinable
     public var startIndex: Int {
         self.rdns.startIndex
     }
-
-    @inlinable
     public var endIndex: Int {
         self.rdns.endIndex
     }
-
-    @inlinable
     public subscript(position: Int) -> RelativeDistinguishedName {
         get {
             self.rdns[position]
@@ -155,8 +145,6 @@ extension DistinguishedName: RandomAccessCollection, MutableCollection, RangeRep
             self.rdns[position] = newValue
         }
     }
-
-    @inlinable
     public mutating func replaceSubrange<NewElements>(_ subrange: Range<Int>, with newElements: NewElements)
     where NewElements: Collection, RelativeDistinguishedName == NewElements.Element {
         self.rdns.replaceSubrange(subrange, with: newElements)
@@ -164,7 +152,6 @@ extension DistinguishedName: RandomAccessCollection, MutableCollection, RangeRep
 }
 
 extension DistinguishedName: CustomStringConvertible {
-    @inlinable
     public var description: String {
         self.reversed().lazy.map { String(describing: $0) }.joined(separator: ",")
     }
@@ -177,7 +164,6 @@ extension DistinguishedName: CustomDebugStringConvertible {
 }
 
 extension DistinguishedName: DERSerializable {
-    @inlinable
     public func serialize(into coder: inout DER.Serializer) throws {
         try coder.appendConstructedNode(identifier: .sequence) { rootCoder in
             for element in self.rdns {
@@ -188,12 +174,9 @@ extension DistinguishedName: DERSerializable {
 }
 
 extension DistinguishedName: DERParseable {
-    @inlinable
     public init(derEncoded rootNode: ASN1Node) throws {
         self.rdns = try DER.sequence(of: RelativeDistinguishedName.self, identifier: .sequence, rootNode: rootNode)
     }
-
-    @inlinable
     static func derEncoded(_ sequenceNodeIterator: inout ASN1NodeCollection.Iterator) throws -> DistinguishedName {
         // This is a workaround for the fact that, even though the conformance to DERImplicitlyTaggable is
         // deprecated, Swift still prefers calling init(derEncoded:withIdentifier:) instead of this one.
@@ -205,17 +188,12 @@ extension DistinguishedName: DERParseable {
 
 @available(*, deprecated, message: "Distinguished names may not be implicitly tagged")
 extension DistinguishedName: DERImplicitlyTaggable {
-    @inlinable
     public static var defaultIdentifier: ASN1Identifier {
         .sequence
     }
-
-    @inlinable
     public init(derEncoded rootNode: ASN1Node, withIdentifier identifier: ASN1Identifier) throws {
         self.rdns = try DER.sequence(of: RelativeDistinguishedName.self, identifier: identifier, rootNode: rootNode)
     }
-
-    @inlinable
     public func serialize(into coder: inout DER.Serializer, withIdentifier identifier: ASN1Identifier) throws {
         try coder.appendConstructedNode(identifier: identifier) { rootCoder in
             for element in self.rdns {

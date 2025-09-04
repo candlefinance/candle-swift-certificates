@@ -18,8 +18,6 @@ public struct Verifier<Policy: VerifierPolicy> {
     public var rootCertificates: CertificateStore
 
     public var policy: Policy
-
-    @inlinable
     public init(rootCertificates: CertificateStore, @PolicyBuilder policy: () throws -> Policy) rethrows {
         self.rootCertificates = rootCertificates
         self.policy = try policy()
@@ -198,8 +196,6 @@ extension VerificationResult {
     public struct PolicyFailure: Hashable, Sendable {
         public var chain: UnverifiedCertificateChain
         public var policyFailureReason: PolicyFailureReason
-
-        @inlinable
         public init(chain: UnverifiedCertificateChain, policyFailureReason: PolicyFailureReason) {
             self.chain = chain
             self.policyFailureReason = policyFailureReason

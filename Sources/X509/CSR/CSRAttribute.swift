@@ -40,7 +40,6 @@ extension CertificateSigningRequest {
         /// - Parameters:
         ///   - oid: The identifier for this extension type.
         ///   - values: The value of this attribute, erased to `ASN1Any`
-        @inlinable
         public init(oid: ASN1ObjectIdentifier, values: [ASN1Any]) {
             self.oid = oid
             self.values = values
@@ -50,7 +49,6 @@ extension CertificateSigningRequest {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension CertificateSigningRequest.Attribute: Hashable {
-    @inlinable
     public static func == (lhs: CertificateSigningRequest.Attribute, rhs: CertificateSigningRequest.Attribute) -> Bool {
         if lhs.oid != rhs.oid { return false }
         if lhs.values.count != rhs.values.count { return false }
@@ -61,8 +59,6 @@ extension CertificateSigningRequest.Attribute: Hashable {
 
         return true
     }
-
-    @inlinable
     public func hash(into hasher: inout Hasher) {
         hasher.combine(self.oid)
 
@@ -96,12 +92,9 @@ extension CertificateSigningRequest.Attribute: CustomStringConvertible {
 // }
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension CertificateSigningRequest.Attribute: DERImplicitlyTaggable {
-    @inlinable
     public static var defaultIdentifier: ASN1Identifier {
         .sequence
     }
-
-    @inlinable
     public init(derEncoded rootNode: ASN1Node, withIdentifier identifier: ASN1Identifier) throws {
         self = try DER.sequence(rootNode, identifier: identifier) { nodes in
             let type = try ASN1ObjectIdentifier(derEncoded: &nodes)
@@ -110,8 +103,6 @@ extension CertificateSigningRequest.Attribute: DERImplicitlyTaggable {
             return CertificateSigningRequest.Attribute(oid: type, values: values)
         }
     }
-
-    @inlinable
     public func serialize(into coder: inout DER.Serializer, withIdentifier identifier: ASN1Identifier) throws {
         try coder.appendConstructedNode(identifier: identifier) { coder in
             try coder.serialize(self.oid)

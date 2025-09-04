@@ -63,7 +63,6 @@ public struct CertificateError: Error, Hashable, CustomStringConvertible {
     /// - Parameter file: The file where the error occurs.
     /// - Parameter line: The line where the error occurs.
     /// - Returns: A ``CertificateError`` with ``code`` set to ``ErrorCode/unsupportedSignatureAlgorithm``.
-    @inline(never)
     public static func unsupportedSignatureAlgorithm(
         reason: String,
         file: String = #fileID,
@@ -84,7 +83,6 @@ public struct CertificateError: Error, Hashable, CustomStringConvertible {
     /// - Parameter file: The file where the error occurs.
     /// - Parameter line: The line where the error occurs.
     /// - Returns: A ``CertificateError`` with ``code`` set to ``ErrorCode/unsupportedPublicKeyAlgorithm``.
-    @inline(never)
     public static func unsupportedPublicKeyAlgorithm(
         reason: String,
         file: String = #fileID,
@@ -105,7 +103,6 @@ public struct CertificateError: Error, Hashable, CustomStringConvertible {
     /// - Parameter file: The file where the error occurs.
     /// - Parameter line: The line where the error occurs.
     /// - Returns: A ``CertificateError`` with ``code`` set to ``ErrorCode/invalidSignatureForCertificate``.
-    @inline(never)
     public static func invalidSignatureForCertificate(
         reason: String,
         file: String = #fileID,
@@ -126,7 +123,6 @@ public struct CertificateError: Error, Hashable, CustomStringConvertible {
     /// - Parameter file: The file where the error occurs.
     /// - Parameter line: The line where the error occurs.
     /// - Returns: A ``CertificateError`` with ``code`` set to ``ErrorCode/incorrectOIDForExtension``.
-    @inline(never)
     public static func incorrectOIDForExtension(
         reason: String,
         file: String = #fileID,
@@ -147,7 +143,6 @@ public struct CertificateError: Error, Hashable, CustomStringConvertible {
     /// - Parameter file: The file where the error occurs.
     /// - Parameter line: The line where the error occurs.
     /// - Returns: A ``CertificateError`` with ``code`` set to ``ErrorCode/unsupportedDigestAlgorithm``.
-    @inline(never)
     public static func unsupportedDigestAlgorithm(
         reason: String,
         file: String = #fileID,
@@ -168,7 +163,6 @@ public struct CertificateError: Error, Hashable, CustomStringConvertible {
     /// - Parameter file: The file where the error occurs.
     /// - Parameter line: The line where the error occurs.
     /// - Returns: A ``CertificateError`` with ``code`` set to ``ErrorCode/unsupportedPrivateKey``.
-    @inline(never)
     public static func unsupportedPrivateKey(
         reason: String,
         file: String = #fileID,
@@ -189,7 +183,6 @@ public struct CertificateError: Error, Hashable, CustomStringConvertible {
     /// - Parameter file: The file where the error occurs.
     /// - Parameter line: The line where the error occurs.
     /// - Returns: A ``CertificateError`` with ``code`` set to ``ErrorCode/incorrectOIDForAttribute``.
-    @inline(never)
     public static func incorrectOIDForAttribute(
         reason: String,
         file: String = #fileID,
@@ -210,7 +203,6 @@ public struct CertificateError: Error, Hashable, CustomStringConvertible {
     /// - Parameter file: The file where the error occurs.
     /// - Parameter line: The line where the error occurs.
     /// - Returns: A ``CertificateError`` with ``code`` set to ``ErrorCode/invalidCSRAttribute``.
-    @inline(never)
     public static func invalidCSRAttribute(
         reason: String,
         file: String = #fileID,
@@ -231,7 +223,6 @@ public struct CertificateError: Error, Hashable, CustomStringConvertible {
     /// - Parameter file: The file where the error occurs.
     /// - Parameter line: The line where the error occurs.
     /// - Returns: A ``CertificateError`` with ``code`` set to ``ErrorCode/duplicateOID``.
-    @inline(never)
     public static func duplicateOID(
         reason: String,
         file: String = #fileID,
@@ -252,7 +243,6 @@ public struct CertificateError: Error, Hashable, CustomStringConvertible {
     /// - Parameter file: The file where the error occurs.
     /// - Parameter line: The line where the error occurs.
     /// - Returns: A ``CertificateError`` with ``code`` set to ``ErrorCode/failedToLoadSystemTrustStore``.
-    @inline(never)
     public static func failedToLoadSystemTrustStore(
         reason: String,
         file: String = #fileID,

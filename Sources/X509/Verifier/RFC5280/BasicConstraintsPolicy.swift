@@ -19,18 +19,12 @@ import Foundation
 import SwiftASN1
 
 /// A sub-policy of the ``RFC5280Policy`` that polices the basicConstraints extension.
-@usableFromInline
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 struct BasicConstraintsPolicy: VerifierPolicy, Sendable {
-    @usableFromInline
     let verifyingCriticalExtensions: [ASN1ObjectIdentifier] = [
         .X509ExtensionID.basicConstraints
     ]
-
-    @inlinable
     init() {}
-
-    @inlinable
     func chainMeetsPolicyRequirements(chain: UnverifiedCertificateChain) -> PolicyEvaluationResult {
         // The rules for BasicConstraints come from https://www.rfc-editor.org/rfc/rfc5280#section-4.2.1.9,
         // but roughly can be summarised as:

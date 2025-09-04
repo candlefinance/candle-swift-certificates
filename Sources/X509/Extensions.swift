@@ -79,14 +79,12 @@ extension Certificate {
     ///
     /// This interface also makes it easy to mark specific extensions as critical.
     public struct Extensions {
-        @usableFromInline
         var _extensions: [Certificate.Extension]
 
         /// Produce a new Extensions container from a collection of ``Certificate/Extension``.
         ///
         /// - Parameter extensions: The base extensions.
         /// - Throws: if multiple extensions have the same OID
-        @inlinable
         public init<Elements>(_ extensions: Elements) throws where Elements: Sequence, Elements.Element == Extension {
             self._extensions = Array(extensions)
 
@@ -137,7 +135,6 @@ extension Certificate {
         /// ```
         ///
         /// - Parameter builder: The ``ExtensionsBuilder`` DSL.
-        @inlinable
         public init(@ExtensionsBuilder builder: () throws -> Result<Certificate.Extensions, any Error>) throws {
             self = try builder().get()
         }
@@ -153,22 +150,15 @@ extension Certificate.Extensions: Sendable {}
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension Certificate.Extensions: RandomAccessCollection {
     /// Produce a new empty Extensions container.
-    @inlinable
     public init() {
         self._extensions = []
     }
-
-    @inlinable
     public var startIndex: Int {
         self._extensions.startIndex
     }
-
-    @inlinable
     public var endIndex: Int {
         self._extensions.endIndex
     }
-
-    @inlinable
     public subscript(position: Int) -> Certificate.Extension {
         get {
             self._extensions[position]
@@ -184,7 +174,6 @@ extension Certificate.Extensions {
     ///
     /// - Parameter extension: The ``Certificate/Extension`` to insert.
     /// - Throws: If an ``Certificate/Extension`` with the same ``Certificate/Extension/oid`` is already present
-    @inlinable
     public mutating func append(_ extension: Certificate.Extension) throws {
         if let oldExtension = self._extensions.first(where: { $0.oid == `extension`.oid }) {
             throw CertificateError.duplicateOID(
@@ -201,7 +190,6 @@ extension Certificate.Extensions {
     ///
     /// - Parameter extension: The ``Certificate/Extension`` to update or append.
     /// - Returns: The old ``Certificate/Extension`` that was replaced or `nil` if no ``Certificate/Extension`` with same ``Certificate/Extension/oid`` was present
-    @inlinable
     @discardableResult
     public mutating func update(_ extension: Certificate.Extension) -> Certificate.Extension? {
         guard let index = self._extensions.firstIndex(where: { $0.oid == `extension`.oid }) else {
@@ -217,7 +205,6 @@ extension Certificate.Extensions {
     /// - Parameter oid: The  ``Certificate/Extension/oid`` of the``Certificate/Extension`` to remove.
     /// - Returns: The ``Certificate/Extension`` that was removed,
     ///     or `nil` if an ``Certificate/Extension`` was not present in with the given `oid`.
-    @inlinable
     @discardableResult
     public mutating func remove(_ oid: ASN1ObjectIdentifier) -> Certificate.Extension? {
         guard let index = self._extensions.firstIndex(where: { $0.oid == oid }) else {
@@ -229,7 +216,6 @@ extension Certificate.Extensions {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension Certificate.Extensions: CustomStringConvertible {
-    @inlinable
     public var description: String {
         guard self.isEmpty else {
             return self._extensions.lazy.map { String(reflecting: $0) }.joined(separator: ", ")
@@ -251,7 +237,6 @@ extension Certificate.Extensions {
     /// Look up a specific extension by its OID.
     ///
     /// - Parameter oid: The OID to search for.
-    @inlinable
     public subscript(oid oid: ASN1ObjectIdentifier) -> Certificate.Extension? {
         get {
             self._extensions.first(where: { $0.oid == oid })
@@ -270,7 +255,6 @@ extension Certificate.Extensions {
     /// extension, if it is present.
     ///
     /// Throws if it is not possible to decode the AIA extension.
-    @inlinable
     public var authorityInformationAccess: AuthorityInformationAccess? {
         get throws {
             try self[oid: .X509ExtensionID.authorityInformationAccess].map { try .init($0) }
@@ -281,7 +265,6 @@ extension Certificate.Extensions {
     /// extension, if it is present.
     ///
     /// Throws if it is not possible to decode the SKI extension.
-    @inlinable
     public var subjectKeyIdentifier: SubjectKeyIdentifier? {
         get throws {
             try self[oid: .X509ExtensionID.subjectKeyIdentifier].map { try .init($0) }
@@ -292,7 +275,6 @@ extension Certificate.Extensions {
     /// extension, if it is present.
     ///
     /// Throws if it is not possible to decode the AKI extension.
-    @inlinable
     public var authorityKeyIdentifier: AuthorityKeyIdentifier? {
         get throws {
             try self[oid: .X509ExtensionID.authorityKeyIdentifier].map { try .init($0) }
@@ -303,7 +285,6 @@ extension Certificate.Extensions {
     /// extension, if it is present.
     ///
     /// Throws if it is not possible to decode the EKU extension.
-    @inlinable
     public var extendedKeyUsage: ExtendedKeyUsage? {
         get throws {
             try self[oid: .X509ExtensionID.extendedKeyUsage].map { try .init($0) }
@@ -314,7 +295,6 @@ extension Certificate.Extensions {
     /// extension, if it is present.
     ///
     /// Throws if it is not possible to decode the basic constraints extension.
-    @inlinable
     public var basicConstraints: BasicConstraints? {
         get throws {
             try self[oid: .X509ExtensionID.basicConstraints].map { try .init($0) }
@@ -325,7 +305,6 @@ extension Certificate.Extensions {
     /// extension, if it is present.
     ///
     /// Throws if it is not possible to decode the key usage extension.
-    @inlinable
     public var keyUsage: KeyUsage? {
         get throws {
             try self[oid: .X509ExtensionID.keyUsage].map { try .init($0) }
@@ -336,7 +315,6 @@ extension Certificate.Extensions {
     /// extension, if it is present.
     ///
     /// Throws if it is not possible to decode the name constraints extension.
-    @inlinable
     public var nameConstraints: NameConstraints? {
         get throws {
             try self[oid: .X509ExtensionID.nameConstraints].map { try .init($0) }
@@ -347,7 +325,6 @@ extension Certificate.Extensions {
     /// extension, if it is present.
     ///
     /// Throws if it is not possible to decode the SAN extension.
-    @inlinable
     public var subjectAlternativeNames: SubjectAlternativeNames? {
         get throws {
             try self[oid: .X509ExtensionID.subjectAlternativeName].map { try .init($0) }

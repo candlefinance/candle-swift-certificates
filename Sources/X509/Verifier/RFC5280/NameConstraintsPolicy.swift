@@ -19,18 +19,12 @@ import Foundation
 import SwiftASN1
 
 /// A sub-policy of the ``RFC5280Policy`` that polices the nameConstraints extension.
-@usableFromInline
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 struct NameConstraintsPolicy: VerifierPolicy, Sendable {
-    @usableFromInline
     let verifyingCriticalExtensions: [ASN1ObjectIdentifier] = [
         .X509ExtensionID.nameConstraints
     ]
-
-    @inlinable
     init() {}
-
-    @inlinable
     func chainMeetsPolicyRequirements(chain: UnverifiedCertificateChain) -> PolicyEvaluationResult {
         // The rules for name constraints come from https://www.rfc-editor.org/rfc/rfc5280#section-4.2.1.10.
         //
@@ -57,8 +51,6 @@ struct NameConstraintsPolicy: VerifierPolicy, Sendable {
 
         return .meetsPolicy
     }
-
-    @inlinable
     static func _validateNameConstraints(
         _ issuedCerts: UnverifiedCertificateChain.SubSequence,
         issuer: Certificate
@@ -105,8 +97,6 @@ struct NameConstraintsPolicy: VerifierPolicy, Sendable {
 
         return .meetsPolicy
     }
-
-    @inlinable
     static func _validateExcludedSubtrees(
         _ excludedSubtrees: [GeneralName],
         _ name: GeneralName
@@ -161,8 +151,6 @@ struct NameConstraintsPolicy: VerifierPolicy, Sendable {
         // No policy rejected this.
         return .meetsPolicy
     }
-
-    @inlinable
     static func _validatePermittedSubtrees(
         _ permittedSubtrees: [GeneralName],
         _ name: GeneralName
@@ -229,47 +217,28 @@ struct NameConstraintsPolicy: VerifierPolicy, Sendable {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension Certificate {
-    @inlinable
     var names: NameSequence {
         get throws {
             return try NameSequence(self)
         }
     }
-
-    @usableFromInline
     struct NameSequence: Sequence, Sendable {
-        @usableFromInline
         var subject: DistinguishedName
-
-        @usableFromInline
         var alternativeNames: SubjectAlternativeNames
-
-        @inlinable
         init(_ certificate: Certificate) throws {
             self.subject = certificate.subject
             self.alternativeNames = try certificate.extensions.subjectAlternativeNames ?? .init()
         }
-
-        @inlinable
         func makeIterator() -> Iterator {
             return Iterator(self.subject, self.alternativeNames)
         }
-
-        @usableFromInline
         struct Iterator: IteratorProtocol, Sendable {
-            @usableFromInline
             var subject: DistinguishedName?
-
-            @usableFromInline
             var alternativeNames: SubjectAlternativeNames.SubSequence
-
-            @inlinable
             init(_ subject: DistinguishedName, _ alternativeNames: SubjectAlternativeNames) {
                 self.subject = subject
                 self.alternativeNames = alternativeNames[...]
             }
-
-            @inlinable
             mutating func next() -> GeneralName? {
                 guard let subject = self.subject else {
                     return self.alternativeNames.popFirst()

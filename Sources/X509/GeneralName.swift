@@ -24,27 +24,15 @@ public enum GeneralName: Hashable, Sendable, DERParseable, DERSerializable {
     case uniformResourceIdentifier(String)
     case ipAddress(ASN1OctetString)
     case registeredID(ASN1ObjectIdentifier)
-
-    @usableFromInline
     static let otherNameTag = ASN1Identifier(tagWithNumber: 0, tagClass: .contextSpecific)
-    @usableFromInline
     static let rfc822NameTag = ASN1Identifier(tagWithNumber: 1, tagClass: .contextSpecific)
-    @usableFromInline
     static let dnsNameTag = ASN1Identifier(tagWithNumber: 2, tagClass: .contextSpecific)
-    @usableFromInline
     static let x400AddressTag = ASN1Identifier(tagWithNumber: 3, tagClass: .contextSpecific)
-    @usableFromInline
     static let directoryNameTag = ASN1Identifier(tagWithNumber: 4, tagClass: .contextSpecific)
-    @usableFromInline
     static let ediPartyNameTag = ASN1Identifier(tagWithNumber: 5, tagClass: .contextSpecific)
-    @usableFromInline
     static let uriTag = ASN1Identifier(tagWithNumber: 6, tagClass: .contextSpecific)
-    @usableFromInline
     static let ipAddressTag = ASN1Identifier(tagWithNumber: 7, tagClass: .contextSpecific)
-    @usableFromInline
     static let registeredIDTag = ASN1Identifier(tagWithNumber: 8, tagClass: .contextSpecific)
-
-    @inlinable
     public init(derEncoded rootNode: ASN1Node) throws {
         switch rootNode.identifier {
         case Self.otherNameTag:
@@ -78,8 +66,6 @@ public enum GeneralName: Hashable, Sendable, DERParseable, DERSerializable {
             throw ASN1Error.unexpectedFieldType(rootNode.identifier)
         }
     }
-
-    @inlinable
     public func serialize(into coder: inout DER.Serializer) throws {
         switch self {
         case .otherName(let otherName):
@@ -108,7 +94,6 @@ public enum GeneralName: Hashable, Sendable, DERParseable, DERSerializable {
 }
 
 extension GeneralName: CustomStringConvertible {
-    @inlinable
     public var description: String {
         switch self {
         case .dnsName(let name):
@@ -154,7 +139,6 @@ extension GeneralName: CustomStringConvertible {
 
 extension GeneralName {
     public struct OtherName: Hashable, Sendable, DERImplicitlyTaggable {
-        @inlinable
         public static var defaultIdentifier: ASN1Identifier {
             .sequence
         }
@@ -162,14 +146,10 @@ extension GeneralName {
         public var typeID: ASN1ObjectIdentifier
 
         public var value: ASN1Any?
-
-        @inlinable
         public init(typeID: ASN1ObjectIdentifier, value: ASN1Any?) {
             self.typeID = typeID
             self.value = value
         }
-
-        @inlinable
         public init(derEncoded rootNode: ASN1Node, withIdentifier identifier: ASN1Identifier) throws {
             self = try DER.sequence(rootNode, identifier: identifier) { nodes in
                 let typeID = try ASN1ObjectIdentifier(derEncoded: &nodes)
@@ -180,8 +160,6 @@ extension GeneralName {
                 return OtherName(typeID: typeID, value: value)
             }
         }
-
-        @inlinable
         public func serialize(into coder: inout DER.Serializer, withIdentifier identifier: ASN1Identifier) throws {
             try coder.appendConstructedNode(identifier: identifier) { coder in
                 try coder.serialize(self.typeID)
@@ -197,33 +175,21 @@ extension GeneralName {
 }
 
 extension GeneralName.OtherName: CustomStringConvertible {
-    @inlinable
     public var description: String {
         "\(self.typeID): \(String(reflecting: self.value))"
     }
 }
-
-@usableFromInline
 struct GeneralNames: DERImplicitlyTaggable, Sendable {
-    @inlinable
     static var defaultIdentifier: ASN1Identifier {
         .sequence
     }
-
-    @usableFromInline
     var names: [GeneralName]
-
-    @inlinable
     init(_ names: [GeneralName]) {
         self.names = names
     }
-
-    @inlinable
     init(derEncoded rootNode: ASN1Node, withIdentifier identifier: ASN1Identifier) throws {
         self.names = try DER.sequence(of: GeneralName.self, identifier: identifier, rootNode: rootNode)
     }
-
-    @inlinable
     func serialize(into coder: inout DER.Serializer, withIdentifier identifier: ASN1Identifier) throws {
         try coder.appendConstructedNode(identifier: identifier) { coder in
             for name in names {

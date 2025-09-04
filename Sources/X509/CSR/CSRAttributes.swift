@@ -41,13 +41,11 @@ extension CertificateSigningRequest {
     /// Users who add their own attribute types (see ``CertificateSigningRequest/Attribute`` for more) are encouraged to add their
     /// own helper getters for those types.
     public struct Attributes {
-        @usableFromInline
         var _attributes: [Attribute]
 
         /// Produce a new Attributes container from a collection of ``CertificateSigningRequest/Attribute``.
         ///
         /// - Parameter attributes: The base attributes.
-        @inlinable
         public init<Elements>(_ attributes: Elements) where Elements: Sequence, Elements.Element == Attribute {
             self._attributes = []
 
@@ -60,7 +58,6 @@ extension CertificateSigningRequest {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension CertificateSigningRequest.Attributes: Hashable {
-    @inlinable
     public static func == (lhs: CertificateSigningRequest.Attributes, rhs: CertificateSigningRequest.Attributes) -> Bool
     {
         if lhs.count != rhs.count { return false }
@@ -71,8 +68,6 @@ extension CertificateSigningRequest.Attributes: Hashable {
 
         return true
     }
-
-    @inlinable
     public func hash(into hasher: inout Hasher) {
         // This achieves order-independent hashing without
         // having to sort anything.
@@ -92,22 +87,15 @@ extension CertificateSigningRequest.Attributes: Sendable {}
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension CertificateSigningRequest.Attributes: RandomAccessCollection {
-    @inlinable
     public init() {
         self._attributes = []
     }
-
-    @inlinable
     public var startIndex: Int {
         self._attributes.startIndex
     }
-
-    @inlinable
     public var endIndex: Int {
         self._attributes.endIndex
     }
-
-    @inlinable
     public subscript(position: Int) -> CertificateSigningRequest.Attribute {
         get {
             self._attributes[position]
@@ -119,7 +107,6 @@ extension CertificateSigningRequest.Attributes: RandomAccessCollection {
     /// If an attribute already exists with this OID, it will be replaced by the new value.
     ///
     /// - Parameter ext: The ``CertificateSigningRequest/Attribute`` to insert.
-    @inlinable
     public mutating func insert(_ ext: CertificateSigningRequest.Attribute) {
         self[oid: ext.oid] = ext
     }
@@ -131,7 +118,6 @@ extension CertificateSigningRequest.Attributes: RandomAccessCollection {
     /// ``CertificateSigningRequest/Attribute/oid``, the last element will win.
     ///
     /// - Parameter extensions: The sequence of new ``CertificateSigningRequest/Attribute``s to insert.
-    @inlinable
     public mutating func insert<Extensions: Sequence>(contentsOf extensions: Extensions)
     where Extensions.Element == CertificateSigningRequest.Attribute {
         for element in extensions {
@@ -142,7 +128,6 @@ extension CertificateSigningRequest.Attributes: RandomAccessCollection {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension CertificateSigningRequest.Attributes: CustomStringConvertible {
-    @inlinable
     public var description: String {
         return "Attributes([\(self._attributes.map { String(reflecting: $0) }.joined(separator: ", "))])"
     }
@@ -154,7 +139,6 @@ extension CertificateSigningRequest.Attributes {
     /// Look up a specific attribute by its OID.
     ///
     /// - Parameter oid: The OID to search for.
-    @inlinable
     public subscript(oid oid: ASN1ObjectIdentifier) -> CertificateSigningRequest.Attribute? {
         get {
             return self.first(where: { $0.oid == oid })
@@ -177,7 +161,6 @@ extension CertificateSigningRequest.Attributes {
     /// attribute, if it is present.
     ///
     /// Throws if it is not possible to decode the Extension Request attribute.
-    @inlinable
     public var extensionRequest: ExtensionRequest? {
         get throws {
             try self[oid: .CSRAttributes.extensionRequest].map { try .init($0) }

@@ -28,7 +28,6 @@ public struct SubjectKeyIdentifier {
     /// Construct a Subject Key Identifier extension with a specific key identifier.
     ///
     /// - Parameter keyIdentifier: The identifier to associate with this certificate.
-    @inlinable
     public init(keyIdentifier: ArraySlice<UInt8>) {
         self.keyIdentifier = keyIdentifier
     }
@@ -39,7 +38,6 @@ public struct SubjectKeyIdentifier {
     /// - Parameter ext: The ``Certificate/Extension`` to unwrap
     /// - Throws: if the ``Certificate/Extension/oid`` is not equal to
     ///     `ASN1ObjectIdentifier.X509ExtensionID.subjectKeyIdentifier`.
-    @inlinable
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
     public init(_ ext: Certificate.Extension) throws {
         guard ext.oid == .X509ExtensionID.subjectKeyIdentifier else {
@@ -76,7 +74,6 @@ extension Certificate.Extension {
     /// - Parameters:
     ///   - ski: The extension to wrap
     ///   - critical: Whether this extension should have the critical bit set.
-    @inlinable
     public init(_ ski: SubjectKeyIdentifier, critical: Bool) throws {
         let asn1Representation = ASN1OctetString(contentBytes: ski.keyIdentifier)
         var serializer = DER.Serializer()
@@ -100,7 +97,6 @@ extension SubjectKeyIdentifier: CertificateExtensionConvertible {
 extension SubjectKeyIdentifier {
     /// Construct a ``SubjectKeyIdentifier`` by hashing the given `publicKey` with SHA-1 according to RFC 5280 Section 4.2.1.2.
     /// - Parameter publicKey: the public key which will be hashed
-    @inlinable
     public init(hash publicKey: Certificate.PublicKey) {
         // RFC 5280 Section 4.2.1.2. Subject Key Identifier (https://www.rfc-editor.org/rfc/rfc5280#section-4.2.1.2)
         // The keyIdentifier is composed of the 160-bit SHA-1 hash of the

@@ -20,7 +20,6 @@ import SwiftASN1
 ///
 /// In practice this most commonly contains OCSP servers and links to the issuing CA certificate.
 public struct AuthorityInformationAccess {
-    @usableFromInline
     var descriptions: [AccessDescription]
 
     /// Create a new empty ``AuthorityInformationAccess/`` object
@@ -33,7 +32,6 @@ public struct AuthorityInformationAccess {
     /// containing specific access descriptions.
     ///
     /// - Parameter descriptions: The descriptions to include in the AIA extension.
-    @inlinable
     public init<Descriptions: Sequence>(_ descriptions: Descriptions) where Descriptions.Element == AccessDescription {
         self.descriptions = Array(descriptions)
     }
@@ -44,7 +42,6 @@ public struct AuthorityInformationAccess {
     /// - Parameter ext: The ``Certificate/Extension`` to unwrap
     /// - Throws: if the ``Certificate/Extension/oid`` is not equal to
     ///     `ASN1ObjectIdentifier.X509ExtensionID.authorityInformationAccess`.
-    @inlinable
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
     public init(_ ext: Certificate.Extension) throws {
         guard ext.oid == .X509ExtensionID.authorityInformationAccess else {
@@ -75,17 +72,12 @@ extension AuthorityInformationAccess: CustomDebugStringConvertible {
 }
 
 extension AuthorityInformationAccess: RandomAccessCollection {
-    @inlinable
     public var startIndex: Int {
         self.descriptions.startIndex
     }
-
-    @inlinable
     public var endIndex: Int {
         self.descriptions.endIndex
     }
-
-    @inlinable
     public subscript(position: Int) -> AccessDescription {
         get {
             self.descriptions[position]
@@ -97,7 +89,6 @@ extension AuthorityInformationAccess: RandomAccessCollection {
 }
 
 extension AuthorityInformationAccess: RangeReplaceableCollection {
-    @inlinable
     public mutating func replaceSubrange(_ subrange: Range<Int>, with newElements: some Collection<AccessDescription>) {
         self.descriptions.replaceSubrange(subrange, with: newElements)
     }
@@ -114,13 +105,10 @@ extension AuthorityInformationAccess {
         public var location: GeneralName
 
         /// Construct a new ``AuthorityInformationAccess/AccessDescription`` from constituent parts.
-        @inlinable
         public init(method: AccessMethod, location: GeneralName) {
             self.method = method
             self.location = location
         }
-
-        @inlinable
         init(_ asn1Form: AIAAccessDescription) {
             self.method = .init(asn1Form.accessMethod)
             self.location = asn1Form.accessLocation
@@ -149,22 +137,15 @@ extension AuthorityInformationAccess.AccessDescription {
     /// ``AuthorityInformationAccess/AccessDescription``
     /// object.
     public struct AccessMethod {
-        @usableFromInline
         var backing: Backing
-
-        @usableFromInline
         enum Backing {
             case ocspServer
             case issuingCA
             case unknownType(ASN1ObjectIdentifier)
         }
-
-        @inlinable
         init(_ backing: Backing) {
             self.backing = backing
         }
-
-        @inlinable
         init(_ oid: ASN1ObjectIdentifier) {
             switch oid {
             case .AccessMethodIdentifiers.ocspServer:
@@ -189,7 +170,6 @@ extension AuthorityInformationAccess.AccessDescription.AccessMethod: Hashable {}
 extension AuthorityInformationAccess.AccessDescription.AccessMethod: Sendable {}
 
 extension AuthorityInformationAccess.AccessDescription.AccessMethod: CustomStringConvertible {
-    @inlinable
     public var description: String {
         switch self.backing {
         case .ocspServer:
@@ -226,7 +206,6 @@ extension Certificate.Extension {
     /// - Parameters:
     ///   - aia: The extension to wrap
     ///   - critical: Whether this extension should have the critical bit set.
-    @inlinable
     public init(_ aia: AuthorityInformationAccess, critical: Bool) throws {
         let asn1Representation = AuthorityInfoAccessSyntax(aia)
         var serializer = DER.Serializer()
@@ -254,27 +233,17 @@ extension AuthorityInformationAccess: CertificateExtensionConvertible {
 // AccessDescription  ::=  SEQUENCE {
 //         accessMethod          OBJECT IDENTIFIER,
 //         accessLocation        GeneralName  }
-@usableFromInline
 struct AuthorityInfoAccessSyntax: DERImplicitlyTaggable, Sendable {
-    @inlinable
     static var defaultIdentifier: ASN1Identifier {
         .sequence
     }
-
-    @usableFromInline
     var descriptions: [AIAAccessDescription]
-
-    @inlinable
     init(_ aia: AuthorityInformationAccess) {
         self.descriptions = aia.descriptions.map { .init($0) }
     }
-
-    @inlinable
     init(derEncoded rootNode: ASN1Node, withIdentifier identifier: ASN1Identifier) throws {
         self.descriptions = try DER.sequence(of: AIAAccessDescription.self, identifier: identifier, rootNode: rootNode)
     }
-
-    @inlinable
     func serialize(into coder: inout DER.Serializer, withIdentifier identifier: ASN1Identifier) throws {
         try coder.appendConstructedNode(identifier: identifier) { coder in
             for description in descriptions {
@@ -283,33 +252,20 @@ struct AuthorityInfoAccessSyntax: DERImplicitlyTaggable, Sendable {
         }
     }
 }
-
-@usableFromInline
 struct AIAAccessDescription: DERImplicitlyTaggable, Sendable {
-    @inlinable
     static var defaultIdentifier: ASN1Identifier {
         .sequence
     }
-
-    @usableFromInline
     var accessMethod: ASN1ObjectIdentifier
-
-    @usableFromInline
     var accessLocation: GeneralName
-
-    @inlinable
     init(accessMethod: ASN1ObjectIdentifier, accessLocation: GeneralName) {
         self.accessMethod = accessMethod
         self.accessLocation = accessLocation
     }
-
-    @inlinable
     init(_ description: AuthorityInformationAccess.AccessDescription) {
         self.accessMethod = ASN1ObjectIdentifier(accessMethod: description.method)
         self.accessLocation = description.location
     }
-
-    @inlinable
     init(derEncoded rootNode: ASN1Node, withIdentifier identifier: ASN1Identifier) throws {
         self = try DER.sequence(rootNode, identifier: identifier) { nodes in
             let accessMethod = try ASN1ObjectIdentifier(derEncoded: &nodes)
@@ -317,8 +273,6 @@ struct AIAAccessDescription: DERImplicitlyTaggable, Sendable {
             return AIAAccessDescription(accessMethod: accessMethod, accessLocation: accessLocation)
         }
     }
-
-    @inlinable
     func serialize(into coder: inout DER.Serializer, withIdentifier identifier: ASN1Identifier) throws {
         try coder.appendConstructedNode(identifier: identifier) { coder in
             try coder.serialize(self.accessMethod)
@@ -328,16 +282,10 @@ struct AIAAccessDescription: DERImplicitlyTaggable, Sendable {
 }
 
 extension ASN1ObjectIdentifier {
-    @usableFromInline
     enum AccessMethodIdentifiers: Sendable {
-        @usableFromInline
         static let ocspServer: ASN1ObjectIdentifier = [1, 3, 6, 1, 5, 5, 7, 48, 1]
-
-        @usableFromInline
         static let issuingCA: ASN1ObjectIdentifier = [1, 3, 6, 1, 5, 5, 7, 48, 2]
     }
-
-    @inlinable
     public init(accessMethod: AuthorityInformationAccess.AccessDescription.AccessMethod) {
         switch accessMethod.backing {
         case .ocspServer:

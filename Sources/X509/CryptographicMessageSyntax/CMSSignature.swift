@@ -27,11 +27,9 @@ import Foundation
 @_spi(CMS)
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 public struct CMSSignature: Sendable, Hashable {
-    @usableFromInline
     let base: CMSSignedData
 
     /// Returns the certificates associated with the signers
-    @inlinable
     public var signers: [Signer] {
         get throws {
             try self.base.signerInfos.compactMap { signerInfo in
@@ -43,7 +41,6 @@ public struct CMSSignature: Sendable, Hashable {
     }
 
     /// The certificates in the signature.
-    @inlinable
     public var certificates: [Certificate] {
         self.base.certificates ?? []
     }
@@ -51,12 +48,9 @@ public struct CMSSignature: Sendable, Hashable {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension CMSSignature: DERImplicitlyTaggable, BERImplicitlyTaggable {
-    @inlinable
     public static var defaultIdentifier: ASN1Identifier {
         CMSContentInfo.defaultIdentifier
     }
-
-    @inlinable
     public init(derEncoded rootNode: ASN1Node, withIdentifier identifier: ASN1Identifier) throws {
         guard let base = try CMSContentInfo(derEncoded: rootNode, withIdentifier: identifier).signedData,
             base.version == .v1 || base.version == .v4
@@ -66,8 +60,6 @@ extension CMSSignature: DERImplicitlyTaggable, BERImplicitlyTaggable {
 
         self.base = base
     }
-
-    @inlinable
     public init(berEncoded rootNode: ASN1Node, withIdentifier identifier: ASN1Identifier) throws {
         guard let base = try CMSContentInfo(berEncoded: rootNode, withIdentifier: identifier).signedData,
             base.version == .v1 || base.version == .v4
@@ -77,8 +69,6 @@ extension CMSSignature: DERImplicitlyTaggable, BERImplicitlyTaggable {
 
         self.base = base
     }
-
-    @inlinable
     public func serialize(into coder: inout DER.Serializer, withIdentifier identifier: ASN1Identifier) throws {
         try CMSContentInfo(self.base).serialize(into: &coder, withIdentifier: identifier)
     }
@@ -95,8 +85,6 @@ extension CMSSignature {
         public let certificate: Certificate
 
         public let signingTime: Date?
-
-        @inlinable
         init(certificate: Certificate, signingTime: Date? = nil) {
             self.certificate = certificate
             self.signingTime = signingTime

@@ -11,35 +11,15 @@
 // SPDX-License-Identifier: Apache-2.0
 //
 //===----------------------------------------------------------------------===//
-
-@usableFromInline
 let ASCII_PERIOD = UInt8(ascii: ".")
-
-@usableFromInline
 let ASCII_ASTERISK = UInt8(ascii: "*")
-
-@usableFromInline
 let ASCII_HYPHEN = UInt8(ascii: "-")
-
-@usableFromInline
 let ASCII_LOWERCASE_A = UInt8(ascii: "a")
-
-@usableFromInline
 let ASCII_LOWERCASE_Z = UInt8(ascii: "z")
-
-@usableFromInline
 let ASCII_UPPERCASE_A = UInt8(ascii: "A")
-
-@usableFromInline
 let ASCII_UPPERCASE_Z = UInt8(ascii: "Z")
-
-@usableFromInline
 let ASCII_ZERO = UInt8(ascii: "0")
-
-@usableFromInline
 let ASCII_NINE = UInt8(ascii: "9")
-
-@usableFromInline
 let ASCII_UNDERSCORE = UInt8(ascii: "_")
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
@@ -57,7 +37,6 @@ extension NameConstraintsPolicy {
     ///
     /// We have a number of other caveats in play, that will be commented within
     /// the body of the function as we go.
-    @inlinable
     static func dnsNameMatchesConstraint(dnsName: String.UTF8View, constraint: String.UTF8View) -> Bool {
         // Before any validation: confirm that these are both valid DNS names.
         guard dnsName.isValidDNSName(isConstraint: false) && constraint.isValidDNSName(isConstraint: true) else {
@@ -130,10 +109,7 @@ extension NameConstraintsPolicy {
 
 extension String.UTF8View {
     // The maximum label length is 63 bytes.
-    @usableFromInline
     static let maximumLabelLength = 63
-
-    @inlinable
     func isValidDNSName(isConstraint: Bool) -> Bool {
         var bytes = self[...]
         var labelCount = 0
@@ -223,33 +199,21 @@ extension String.UTF8View {
 
     }
 }
-
-@usableFromInline
 struct ReverseDNSLabelSequence: Sequence, Sendable {
-    @usableFromInline
     var base: String.UTF8View.SubSequence
-
-    @inlinable
     init(_ base: String.UTF8View.SubSequence) {
         self.base = base
     }
-
-    @inlinable
     func makeIterator() -> Iterator {
         return Iterator(self.base)
     }
-
-    @usableFromInline
     struct Iterator: IteratorProtocol, Sendable {
-        @usableFromInline
         var base: String.UTF8View.SubSequence?
-
-        @inlinable
         init(_ base: String.UTF8View.SubSequence) {
             self.base = base
         }
 
-        @inlinable mutating func next() -> String.UTF8View.SubSequence? {
+        mutating func next() -> String.UTF8View.SubSequence? {
             // If we've sliced everything out, this is the end of the sequence.
             guard let base = self.base else {
                 return nil
@@ -272,17 +236,14 @@ struct ReverseDNSLabelSequence: Sequence, Sendable {
             return label
         }
 
-        @inlinable var hasMoreLabels: Bool {
+        var hasMoreLabels: Bool {
             return self.base != nil
         }
     }
 }
 
 extension String.UTF8View.SubSequence {
-    @usableFromInline
     static let asciiCaseInsensitiveMask: UInt8 = ~(1 << 5)
-
-    @inlinable
     func caseInsensitiveASCIIMatch(_ other: Self) -> Bool {
         guard self.count == other.count else {
             return false
@@ -295,14 +256,10 @@ extension String.UTF8View.SubSequence {
             }
         )
     }
-
-    @usableFromInline
     enum LabelContents: Sendable {
         case allASCII(nonNumerics: Int)
         case nonASCII
     }
-
-    @inlinable
     var labelContents: LabelContents {
         var nonNumerics = 0
 

@@ -33,21 +33,15 @@ import wasi_pthread
 #endif
 
 #if os(Windows)
-@usableFromInline
 typealias LockPrimitive = SRWLOCK
 #elseif os(OpenBSD) || os(FreeBSD)
-@usableFromInline
 typealias LockPrimitive = pthread_mutex_t?
 #else
-@usableFromInline
 typealias LockPrimitive = pthread_mutex_t
 #endif
-
-@usableFromInline
 enum LockOperations: Sendable {}
 
 extension LockOperations {
-    @inlinable
     static func create(_ mutex: UnsafeMutablePointer<LockPrimitive>) {
         mutex.assertValidAlignment()
 
@@ -72,8 +66,6 @@ extension LockOperations {
         precondition(err == 0, "\(#function) failed in pthread_mutex with error \(err)")
         #endif
     }
-
-    @inlinable
     static func destroy(_ mutex: UnsafeMutablePointer<LockPrimitive>) {
         mutex.assertValidAlignment()
 
@@ -84,8 +76,6 @@ extension LockOperations {
         precondition(err == 0, "\(#function) failed in pthread_mutex with error \(err)")
         #endif
     }
-
-    @inlinable
     static func lock(_ mutex: UnsafeMutablePointer<LockPrimitive>) {
         mutex.assertValidAlignment()
 
@@ -96,8 +86,6 @@ extension LockOperations {
         precondition(err == 0, "\(#function) failed in pthread_mutex with error \(err)")
         #endif
     }
-
-    @inlinable
     static func unlock(_ mutex: UnsafeMutablePointer<LockPrimitive>) {
         mutex.assertValidAlignment()
 
@@ -138,10 +126,7 @@ extension LockOperations {
 // and future maintainers will be happier that we were cautious.
 //
 // See also: https://github.com/apple/swift/pull/40000
-@usableFromInline
 final class LockStorage<Value>: ManagedBuffer<Value, LockPrimitive> {
-
-    @inlinable
     static func create(value: Value) -> Self {
         let buffer = Self.create(minimumCapacity: 1) { _ in
             value
@@ -157,36 +142,26 @@ final class LockStorage<Value>: ManagedBuffer<Value, LockPrimitive> {
 
         return storage
     }
-
-    @inlinable
     func lock() {
         self.withUnsafeMutablePointerToElements { lockPtr in
             LockOperations.lock(lockPtr)
         }
     }
-
-    @inlinable
     func unlock() {
         self.withUnsafeMutablePointerToElements { lockPtr in
             LockOperations.unlock(lockPtr)
         }
     }
-
-    @inlinable
     deinit {
         self.withUnsafeMutablePointerToElements { lockPtr in
             LockOperations.destroy(lockPtr)
         }
     }
-
-    @inlinable
     func withLockPrimitive<T>(_ body: (UnsafeMutablePointer<LockPrimitive>) throws -> T) rethrows -> T {
         try self.withUnsafeMutablePointerToElements { lockPtr in
             try body(lockPtr)
         }
     }
-
-    @inlinable
     func withLockedValue<T>(_ mutate: (inout Value) throws -> T) rethrows -> T {
         try self.withUnsafeMutablePointers { valuePtr, lockPtr in
             LockOperations.lock(lockPtr)
@@ -207,11 +182,9 @@ extension LockStorage: Sendable {}
 /// of lock is safe to use with `libpthread`-based threading models.
 /// On Windows, the lock is based on the substantially similar `SRWLOCK` type.
 struct CertificatesLock {
-    @usableFromInline
     internal let _storage: LockStorage<Void>
 
     /// Create a new lock.
-    @inlinable
     init() {
         self._storage = .create(value: ())
     }
@@ -220,7 +193,6 @@ struct CertificatesLock {
     ///
     /// Whenever possible, consider using `withLock` instead of this method and
     /// `unlock`, to simplify lock handling.
-    @inlinable
     func lock() {
         self._storage.lock()
     }
@@ -229,12 +201,9 @@ struct CertificatesLock {
     ///
     /// Whenever possible, consider using `withLock` instead of this method and
     /// `lock`, to simplify lock handling.
-    @inlinable
     func unlock() {
         self._storage.unlock()
     }
-
-    @inlinable
     internal func withLockPrimitive<T>(_ body: (UnsafeMutablePointer<LockPrimitive>) throws -> T) rethrows -> T {
         try self._storage.withLockPrimitive(body)
     }
@@ -249,7 +218,6 @@ extension CertificatesLock {
     ///
     /// - Parameter body: The block to execute while holding the lock.
     /// - Returns: The value returned by the block.
-    @inlinable
     func withLock<T>(_ body: () throws -> T) rethrows -> T {
         self.lock()
         defer {
@@ -257,8 +225,6 @@ extension CertificatesLock {
         }
         return try body()
     }
-
-    @inlinable
     func withLockVoid(_ body: () throws -> Void) rethrows {
         try self.withLock(body)
     }
@@ -267,7 +233,6 @@ extension CertificatesLock {
 extension CertificatesLock: @unchecked Sendable {}
 
 extension UnsafeMutablePointer {
-    @inlinable
     func assertValidAlignment() {
         assert(UInt(bitPattern: self) % UInt(MemoryLayout<Pointee>.alignment) == 0)
     }
@@ -278,7 +243,6 @@ extension UnsafeMutablePointer {
 ///
 /// This is currently the only way to do this in Swift: see
 /// https://forums.swift.org/t/support-debug-only-code/11037 for a discussion.
-@inlinable
 internal func debugOnly(_ body: () -> Void) {
     assert(
         {

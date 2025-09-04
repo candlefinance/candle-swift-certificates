@@ -24,12 +24,9 @@ public struct LocalityName: RelativeDistinguishedNameConvertible, Sendable {
     /// Construct a new locality name
     ///
     /// - Parameter name: The value of the locality name
-    @inlinable
     public init(_ name: String) {
         self.name = name
     }
-
-    @inlinable
     public func makeRDN() throws -> RelativeDistinguishedName {
         return RelativeDistinguishedName(
             .init(type: .RDNAttributeType.localityName, utf8String: name)

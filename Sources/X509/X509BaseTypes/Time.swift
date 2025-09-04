@@ -22,12 +22,9 @@ import SwiftASN1
 // Time ::= CHOICE {
 // utcTime        UTCTime,
 // generalTime    GeneralizedTime }
-@usableFromInline
 enum Time: DERParseable, DERSerializable, Hashable, Sendable {
     case utcTime(UTCTime)
     case generalTime(GeneralizedTime)
-
-    @inlinable
     init(derEncoded rootNode: ASN1Node) throws {
         switch rootNode.identifier {
         case GeneralizedTime.defaultIdentifier:
@@ -38,8 +35,6 @@ enum Time: DERParseable, DERSerializable, Hashable, Sendable {
             throw ASN1Error.unexpectedFieldType(rootNode.identifier)
         }
     }
-
-    @inlinable
     func serialize(into coder: inout DER.Serializer) throws {
         switch self {
         case .utcTime(let utcTime):
@@ -48,8 +43,6 @@ enum Time: DERParseable, DERSerializable, Hashable, Sendable {
             try coder.serialize(generalizedTime)
         }
     }
-
-    @inlinable
     static func makeTime(from date: Date) throws -> Time {
         let components = date.utcDate
 
@@ -65,19 +58,14 @@ enum Time: DERParseable, DERSerializable, Hashable, Sendable {
 }
 
 extension Date {
-    @inlinable
     init(fromUTCDate date: (year: Int, month: Int, day: Int, hours: Int, minutes: Int, seconds: Int)) {
         let timestamp = Int64(timestampFromUTCDate: date)
         self = .init(timeIntervalSince1970: TimeInterval(timestamp))
     }
-
-    @inlinable
     var utcDate: (year: Int, month: Int, day: Int, hours: Int, minutes: Int, seconds: Int) {
         let timestamp = Int64(self.timeIntervalSince1970.rounded())
         return timestamp.utcDateFromTimestamp
     }
-
-    @inlinable
     init(_ time: Time) {
         switch time {
         case .generalTime(let generalizedTime):
@@ -86,8 +74,6 @@ extension Date {
             self = .init(utcTime)
         }
     }
-
-    @inlinable
     init(_ time: GeneralizedTime) {
         self = Date(
             fromUTCDate: (
@@ -96,8 +82,6 @@ extension Date {
             )
         )
     }
-
-    @inlinable
     init(_ time: UTCTime) {
         self = Date(
             fromUTCDate: (
@@ -109,7 +93,6 @@ extension Date {
 }
 
 extension GeneralizedTime {
-    @inlinable
     init(_ time: Time) {
         switch time {
         case .generalTime(let t):
@@ -127,8 +110,6 @@ extension GeneralizedTime {
             )
         }
     }
-
-    @inlinable
     init(_ components: (year: Int, month: Int, day: Int, hours: Int, minutes: Int, seconds: Int)) throws {
         try self.init(
             year: components.year,
@@ -140,8 +121,6 @@ extension GeneralizedTime {
             fractionalSeconds: 0.0
         )
     }
-
-    @inlinable
     init(_ date: Date) {
         // This cannot throw: any valid Date can be represented.
         try! self.init(date.utcDate)
@@ -149,7 +128,6 @@ extension GeneralizedTime {
 }
 
 extension UTCTime {
-    @inlinable
     init(_ components: (year: Int, month: Int, day: Int, hours: Int, minutes: Int, seconds: Int)) throws {
         try self.init(
             year: components.year,

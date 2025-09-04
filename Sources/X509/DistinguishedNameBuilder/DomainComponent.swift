@@ -24,12 +24,9 @@ public struct DomainComponent: RelativeDistinguishedNameConvertible, Sendable {
     /// Construct a new organizational unit name
     ///
     /// - Parameter name: The value of the organizational unit name
-    @inlinable
     public init(_ name: String) {
         self.name = name
     }
-
-    @inlinable
     public func makeRDN() throws -> RelativeDistinguishedName {
         return RelativeDistinguishedName(
             try .init(type: .RDNAttributeType.domainComponent, ia5String: name)

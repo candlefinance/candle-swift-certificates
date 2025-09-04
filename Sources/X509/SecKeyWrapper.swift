@@ -26,25 +26,16 @@ import Foundation
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension Certificate.PrivateKey {
     /// A wrapper around ``Security.SecKey`` to allow the use of `SecKey` with certificates.
-    @usableFromInline
     struct SecKeyWrapper: Sendable {
-        @usableFromInline
         let privateKey: SecKey
-        @usableFromInline
         let publicKey: Certificate.PublicKey
-        @usableFromInline
         let type: KeyType
-        @usableFromInline
         let attributes: [String: any Sendable]
-
-        @usableFromInline
         enum ECKeySize: Sendable {
             case P256
             case P384
             case P521
         }
-
-        @usableFromInline
         enum KeyType: Sendable {
             case RSA
             case ECDSA(ECKeySize)
@@ -56,7 +47,6 @@ extension Certificate.PrivateKey {
         /// data that will be needed at later points. Importantly, some of these operations
         /// can throw, so these are performs during initialisation rather than at later
         /// stages where throwing is unacceptable.
-        @inlinable
         init(key: SecKey) throws {
             self.privateKey = key
 
@@ -68,8 +58,6 @@ extension Certificate.PrivateKey {
 
             self.publicKey = try Self.publicKey(privateKey: key, type: self.type)
         }
-
-        @usableFromInline
         static func keyAttributes(key: SecKey) throws -> [String: any Sendable] {
             guard let attributes = SecKeyCopyAttributes(key) as? [CFString: any Sendable] else {
                 throw CertificateError.unsupportedPrivateKey(
@@ -79,8 +67,6 @@ extension Certificate.PrivateKey {
 
             return attributes as [String: any Sendable]
         }
-
-        @usableFromInline
         static func validateSecKey(attributes: [String: any Sendable]) throws {
             guard let keyClassType = attributes[kSecAttrKeyClass as String] as? String else {
                 throw CertificateError.unsupportedPrivateKey(
@@ -95,8 +81,6 @@ extension Certificate.PrivateKey {
                 )
             }
         }
-
-        @usableFromInline
         static func publicKeyData(privateKey: SecKey) throws -> Data {
             var error: Unmanaged<CFError>? = nil
             guard let publicSecKey = SecKeyCopyPublicKey(privateKey),
@@ -115,8 +99,6 @@ extension Certificate.PrivateKey {
 
             return publicKeyData
         }
-
-        @usableFromInline
         static func keyType(attributes: [String: any Sendable]) throws -> KeyType {
             guard let privateKeyType = attributes[kSecAttrKeyType as String] as? String else {
                 throw CertificateError.unsupportedPrivateKey(
@@ -146,8 +128,6 @@ extension Certificate.PrivateKey {
                 )
             }
         }
-
-        @usableFromInline
         static func publicKey(privateKey: SecKey, type: KeyType) throws -> Certificate.PublicKey {
             let publicKeyData = try Self.publicKeyData(privateKey: privateKey)
 
@@ -243,8 +223,6 @@ extension Certificate.PrivateKey {
 
             return algorithm
         }
-
-        @usableFromInline
         func signature<Bytes: DataProtocol>(
             for bytes: Bytes,
             signatureAlgorithm: Certificate.SignatureAlgorithm
@@ -275,8 +253,6 @@ extension Certificate.PrivateKey {
                 }
             }
         }
-
-        @usableFromInline
         var isSerializable: Bool {
             if let extractable = self.attributes[kSecAttrIsExtractable as String] as? Bool {
                 return extractable
@@ -286,7 +262,6 @@ extension Certificate.PrivateKey {
         }
 
         @available(macOS 11.0, iOS 14, tvOS 14, watchOS 7, macCatalyst 14, visionOS 1.0, *)
-        @inlinable
         func pemDocument() throws -> PEMDocument {
             if !self.isSerializable {
                 throw CertificateError.unsupportedPrivateKey(

@@ -37,15 +37,10 @@ extension Certificate {
     /// used by ``Certificate/init(version:serialNumber:publicKey:notValidBefore:notValidAfter:issuer:subject:signatureAlgorithm:extensions:issuerPrivateKey:)``.
     /// Otherwise, this type has essentially no behaviours.
     public struct Signature {
-        @usableFromInline
         var backing: BackingSignature
-
-        @inlinable
         internal init(backing: BackingSignature) {
             self.backing = backing
         }
-
-        @inlinable
         internal init(signatureAlgorithm: SignatureAlgorithm, signatureBytes: ASN1BitString) throws {
             switch signatureAlgorithm {
             case .ecdsaWithSHA256, .ecdsaWithSHA384, .ecdsaWithSHA512:
@@ -91,13 +86,10 @@ extension Certificate.Signature: CustomStringConvertible {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension Certificate.Signature {
-    @usableFromInline
     enum BackingSignature: Hashable, Sendable {
         case ecdsa(ECDSASignature)
         case rsa(_CryptoExtras._RSA.Signing.RSASignature)
         case ed25519(Data)
-
-        @inlinable
         static func == (lhs: BackingSignature, rhs: BackingSignature) -> Bool {
             switch (lhs, rhs) {
             case (.ecdsa(let l), .ecdsa(let r)):
@@ -110,8 +102,6 @@ extension Certificate.Signature {
                 return false
             }
         }
-
-        @inlinable
         func hash(into hasher: inout Hasher) {
             switch self {
             case .ecdsa(let sig):
@@ -131,7 +121,6 @@ extension Certificate.Signature {
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension Certificate.Signature {
     /// The raw byte representation of the signature.
-    @inlinable
     public var rawRepresentation: [UInt8] {
         switch self.backing {
         case .ecdsa(let sig):
@@ -148,7 +137,6 @@ extension Certificate.Signature {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension ASN1BitString {
-    @inlinable
     init(_ signature: Certificate.Signature) {
         self.init(bytes: signature.rawRepresentation[...])
     }
@@ -156,7 +144,6 @@ extension ASN1BitString {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension ASN1OctetString {
-    @inlinable
     init(_ signature: Certificate.Signature) {
         switch signature.backing {
         case .ecdsa(let sig):
@@ -175,7 +162,6 @@ extension ASN1OctetString {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension P256.Signing.PublicKey {
-    @inlinable
     internal func isValidSignature<Bytes: DataProtocol>(
         _ signature: Certificate.Signature,
         for bytes: Bytes,
@@ -203,7 +189,6 @@ extension P256.Signing.PublicKey {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension P384.Signing.PublicKey {
-    @inlinable
     internal func isValidSignature<Bytes: DataProtocol>(
         _ signature: Certificate.Signature,
         for bytes: Bytes,
@@ -231,7 +216,6 @@ extension P384.Signing.PublicKey {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension P521.Signing.PublicKey {
-    @inlinable
     internal func isValidSignature<Bytes: DataProtocol>(
         _ signature: Certificate.Signature,
         for bytes: Bytes,
@@ -259,7 +243,6 @@ extension P521.Signing.PublicKey {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension _RSA.Signing.PublicKey {
-    @inlinable
     internal func isValidSignature<Bytes: DataProtocol>(
         _ signature: Certificate.Signature,
         for bytes: Bytes,
@@ -289,7 +272,6 @@ extension _RSA.Signing.PublicKey {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension Curve25519.Signing.PublicKey {
-    @inlinable
     internal func isValidSignature<Bytes: DataProtocol>(
         _ signature: Certificate.Signature,
         for bytes: Bytes,
@@ -313,7 +295,6 @@ extension Curve25519.Signing.PublicKey {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension P256.Signing.PrivateKey {
-    @inlinable
     func signature<Bytes: DataProtocol>(
         for bytes: Bytes,
         signatureAlgorithm: Certificate.SignatureAlgorithm
@@ -340,7 +321,6 @@ extension P256.Signing.PrivateKey {
 #if canImport(Darwin)
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension SecureEnclave.P256.Signing.PrivateKey {
-    @inlinable
     func signature<Bytes: DataProtocol>(
         for bytes: Bytes,
         signatureAlgorithm: Certificate.SignatureAlgorithm
@@ -367,7 +347,6 @@ extension SecureEnclave.P256.Signing.PrivateKey {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension P384.Signing.PrivateKey {
-    @inlinable
     func signature<Bytes: DataProtocol>(
         for bytes: Bytes,
         signatureAlgorithm: Certificate.SignatureAlgorithm
@@ -393,7 +372,6 @@ extension P384.Signing.PrivateKey {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension P521.Signing.PrivateKey {
-    @inlinable
     func signature<Bytes: DataProtocol>(
         for bytes: Bytes,
         signatureAlgorithm: Certificate.SignatureAlgorithm
@@ -419,7 +397,6 @@ extension P521.Signing.PrivateKey {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension _RSA.Signing.PrivateKey {
-    @inlinable
     func signature<Bytes: DataProtocol>(
         for bytes: Bytes,
         signatureAlgorithm: Certificate.SignatureAlgorithm
@@ -449,7 +426,6 @@ extension _RSA.Signing.PrivateKey {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension Curve25519.Signing.PrivateKey {
-    @inlinable
     func signature<Bytes: DataProtocol>(
         for bytes: Bytes,
         signatureAlgorithm: Certificate.SignatureAlgorithm

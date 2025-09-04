@@ -18,14 +18,12 @@ import SwiftASN1
 /// may be used, in addition to or instead of the the purposes indicated
 /// in the ``KeyUsage`` extension.
 public struct ExtendedKeyUsage {
-    @usableFromInline
     var usages: [Usage]
 
     /// Construct an ``ExtendedKeyUsage`` extension containing the
     /// given usages.
     ///
     /// - Parameter usages: The purposes for which the certificate may be used.
-    @inlinable
     public init<Usages: Sequence>(_ usages: Usages) throws where Usages.Element == Usage {
         self.usages = Array(usages)
 
@@ -55,7 +53,6 @@ public struct ExtendedKeyUsage {
     /// - Parameter ext: The ``Certificate/Extension`` to unwrap
     /// - Throws: if the ``Certificate/Extension/oid`` is not equal to
     ///     `ASN1ObjectIdentifier.X509ExtensionID.extendedKeyUsage`.
-    @inlinable
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
     public init(_ ext: Certificate.Extension) throws {
         guard ext.oid == .X509ExtensionID.extendedKeyUsage else {
@@ -69,14 +66,12 @@ public struct ExtendedKeyUsage {
     }
 
     /// Create a new empty ``ExtendedKeyUsage`` object with no usages.
-    @inlinable
     public init() {
         self.usages = []
     }
 }
 
 extension Array {
-    @inlinable
     /// Searches for duplicates using a linear scan.
     /// This is more performant compared to hashing if we have less than ~64 usages
     /// - Parameter areEqual: a predicate that returns true if the first and second arguments are considered equal
@@ -140,7 +135,6 @@ extension ExtendedKeyUsage {
     /// - Returns: A pair `(inserted, index)`, where `inserted` is a Boolean value
     ///    indicating whether the operation added a new element, and `index` is
     ///    the index of `usage` in the resulting ``ExtendedKeyUsage``.
-    @inlinable
     @discardableResult
     public mutating func append(_ usage: Element) -> (inserted: Bool, index: Int) {
         self.insert(usage, at: self.endIndex)
@@ -157,7 +151,6 @@ extension ExtendedKeyUsage {
     ///    indicating whether the operation added a new element, and `index` is
     ///    the index of `item` in the resulting set. If `inserted` is false, then
     ///    the returned `index` may be different from the index requested.
-    @inlinable
     @discardableResult
     public mutating func insert(
         _ usage: Element,
@@ -173,7 +166,6 @@ extension ExtendedKeyUsage {
     /// Removes the given `usage` from `self`, if present.
     /// - Parameter usage: The  ``Usage`` to remove.
     /// - Returns: The ``Usage`` that was removed or `nil` if `usage` was not present.
-    @inlinable
     @discardableResult
     public mutating func remove(_ usage: Element) -> Element? {
         guard let index = self.usages.firstIndex(where: { $0 == usage }) else {
@@ -188,7 +180,6 @@ extension ExtendedKeyUsage {
     /// ``ExtendedKeyUsage``
     /// extension.
     public struct Usage {
-        @usableFromInline
         enum Backing {
             case serverAuth
             case clientAuth
@@ -200,11 +191,7 @@ extension ExtendedKeyUsage {
             case certificateTransparency
             case unknown(ASN1ObjectIdentifier)
         }
-
-        @usableFromInline
         var backing: Backing
-
-        @inlinable
         init(_ backing: Backing) {
             self.backing = backing
         }
@@ -212,7 +199,6 @@ extension ExtendedKeyUsage {
         /// Constructs a ``ExtendedKeyUsage/Usage`` from an opaque oid.
         ///
         /// - Parameter oid: The OID of the usage.
-        @inlinable
         public init(oid: ASN1ObjectIdentifier) {
             switch oid {
             case .ExtendedKeyUsage.serverAuth:
@@ -327,7 +313,6 @@ extension Certificate.Extension {
     /// - Parameters:
     ///   - eku: The extension to wrap
     ///   - critical: Whether this extension should have the critical bit set.
-    @inlinable
     public init(_ eku: ExtendedKeyUsage, critical: Bool) throws {
         let asn1Representation = ASN1ExtendedKeyUsage(eku)
         var serializer = DER.Serializer()
@@ -347,7 +332,6 @@ extension ASN1ObjectIdentifier {
     /// Construct the OID corresponding to a specific extended key usage.
     ///
     /// - Parameter usage: the EKU to use to construct the OID.
-    @inlinable
     public init(_ usage: X509.ExtendedKeyUsage.Usage) {
         switch usage.backing {
         case .serverAuth:
@@ -400,33 +384,20 @@ extension ASN1ObjectIdentifier {
         public static let certificateTransparency: ASN1ObjectIdentifier = [1, 3, 6, 1, 4, 1, 11129, 2, 4, 4]
     }
 }
-
-@usableFromInline
 struct ASN1ExtendedKeyUsage: DERImplicitlyTaggable, Sendable {
-    @inlinable
     static var defaultIdentifier: ASN1Identifier {
         .sequence
     }
-
-    @usableFromInline
     var usages: [ASN1ObjectIdentifier]
-
-    @inlinable
     init(_ usages: [ASN1ObjectIdentifier]) {
         self.usages = usages
     }
-
-    @inlinable
     init(_ eku: ExtendedKeyUsage) {
         self.usages = eku.usages.map { ASN1ObjectIdentifier($0) }
     }
-
-    @inlinable
     init(derEncoded rootNode: ASN1Node, withIdentifier identifier: ASN1Identifier) throws {
         self.usages = try DER.sequence(identifier: identifier, rootNode: rootNode)
     }
-
-    @inlinable
     func serialize(into coder: inout DER.Serializer, withIdentifier identifier: ASN1Identifier) throws {
         try coder.serializeSequenceOf(self.usages, identifier: identifier)
     }

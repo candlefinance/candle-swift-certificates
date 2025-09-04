@@ -29,26 +29,16 @@ import Crypto
 /// We define this type here because an X.509 certificate may have an ECDSA signature
 /// in it without reference to what key created it. We need to be able to store it
 /// abstractly, and then turn it into the signature type we need on request.
-@usableFromInline
 struct ECDSASignature: DERImplicitlyTaggable, Hashable, Sendable {
-    @inlinable
     static var defaultIdentifier: ASN1Identifier {
         .sequence
     }
-
-    @usableFromInline
     var r: ArraySlice<UInt8>
-
-    @usableFromInline
     var s: ArraySlice<UInt8>
-
-    @inlinable
     init(r: ArraySlice<UInt8>, s: ArraySlice<UInt8>) {
         self.r = r
         self.s = s
     }
-
-    @inlinable
     init(derEncoded rootNode: ASN1Node, withIdentifier identifier: ASN1Identifier) throws {
         self = try DER.sequence(rootNode, identifier: identifier) { nodes in
             let r = try ArraySlice<UInt8>(derEncoded: &nodes)
@@ -57,16 +47,12 @@ struct ECDSASignature: DERImplicitlyTaggable, Hashable, Sendable {
             return ECDSASignature(r: r, s: s)
         }
     }
-
-    @inlinable
     func serialize(into coder: inout DER.Serializer, withIdentifier identifier: ASN1Identifier) throws {
         try coder.appendConstructedNode(identifier: identifier) { coder in
             try coder.serialize(self.r)
             try coder.serialize(self.s)
         }
     }
-
-    @inlinable
     init(rawSignatureBytes raw: Data) {
         let half = raw.count / 2
         let r = ArraySlice(normalisingToASN1IntegerForm: raw.prefix(upTo: half))
@@ -74,20 +60,14 @@ struct ECDSASignature: DERImplicitlyTaggable, Hashable, Sendable {
 
         self = ECDSASignature(r: r, s: s)
     }
-
-    @inlinable
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
     init(_ sig: P256.Signing.ECDSASignature) {
         self = .init(rawSignatureBytes: sig.rawRepresentation)
     }
-
-    @inlinable
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
     init(_ sig: P384.Signing.ECDSASignature) {
         self = .init(rawSignatureBytes: sig.rawRepresentation)
     }
-
-    @inlinable
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
     init(_ sig: P521.Signing.ECDSASignature) {
         self = .init(rawSignatureBytes: sig.rawRepresentation)
@@ -96,7 +76,6 @@ struct ECDSASignature: DERImplicitlyTaggable, Hashable, Sendable {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension P256.Signing.ECDSASignature {
-    @inlinable
     init?(_ signature: ECDSASignature) {
         let coordinateByteCount = 32
 
@@ -124,7 +103,6 @@ extension P256.Signing.ECDSASignature {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension P384.Signing.ECDSASignature {
-    @inlinable
     init?(_ signature: ECDSASignature) {
         let coordinateByteCount = 48
 
@@ -152,7 +130,6 @@ extension P384.Signing.ECDSASignature {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension P521.Signing.ECDSASignature {
-    @inlinable
     init?(_ signature: ECDSASignature) {
         let coordinateByteCount = 66
 
@@ -183,18 +160,13 @@ extension ArraySlice where Element == UInt8 {
     /// form we'd get from decoding an ASN1 integer.
     ///
     /// This means we strip leading zero bytes.
-    @inlinable
     init<Bytes: Collection>(normalisingToASN1IntegerForm bigEndianRawInteger: Bytes) where Bytes.Element == UInt8 {
         let realBytes = bigEndianRawInteger.drop(while: { $0 == 0 })
         self = ArraySlice(realBytes)
     }
-
-    @inlinable
     init(normalisingToASN1IntegerForm bigEndianRawInteger: ArraySlice<UInt8>) {
         self = bigEndianRawInteger.drop(while: { $0 == 0 })
     }
-
-    @inlinable
     init(normalisingToASN1IntegerForm bigEndianRawInteger: [UInt8]) {
         self.init(normalisingToASN1IntegerForm: bigEndianRawInteger[...])
     }

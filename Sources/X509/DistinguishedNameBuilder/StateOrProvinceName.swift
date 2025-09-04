@@ -24,12 +24,9 @@ public struct StateOrProvinceName: RelativeDistinguishedNameConvertible, Sendabl
     /// Construct a new state or province name
     ///
     /// - Parameter name: The value of the state or province name
-    @inlinable
     public init(_ name: String) {
         self.name = name
     }
-
-    @inlinable
     public func makeRDN() throws -> RelativeDistinguishedName {
         return RelativeDistinguishedName(
             .init(type: .RDNAttributeType.stateOrProvinceName, utf8String: name)

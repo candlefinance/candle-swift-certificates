@@ -13,7 +13,6 @@
 //===----------------------------------------------------------------------===//
 
 extension RandomNumberGenerator {
-    @inlinable
     internal mutating func bytes(count: Int) -> ArraySlice<UInt8> {
         precondition(count >= 0)
         var bytes = [UInt8]()
@@ -27,7 +26,6 @@ extension RandomNumberGenerator {
 }
 
 extension Array where Element == UInt8 {
-    @inlinable
     mutating func appendLittleEndianBytes(_ number: UInt64) {
         let number = number.littleEndian
 

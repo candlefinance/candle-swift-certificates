@@ -42,20 +42,10 @@ public struct RFC5280Policy: VerifierPolicy, Sendable {
         // we _pretend_ to police the key usage, and just...don't.
         .X509ExtensionID.keyUsage,
     ]
-
-    @usableFromInline
     let versionPolicy: VersionPolicy
-
-    @usableFromInline
     let expiryPolicy: ExpiryPolicy?
-
-    @usableFromInline
     let basicConstraintsPolicy: BasicConstraintsPolicy
-
-    @usableFromInline
     let nameConstraintsPolicy: NameConstraintsPolicy
-
-    @inlinable
     @available(*, deprecated, renamed: "init(fixedValidationTime:)", message: "Use init(fixedValidationTime:) instead.")
     public init(validationTime: Date) {
         self.init(fixedValidationTime: validationTime)
@@ -69,7 +59,6 @@ public struct RFC5280Policy: VerifierPolicy, Sendable {
     ///
     /// - Important: Pass `nil` to `fixedValidationTime` for the current time to be obtained at the time of validation and then used for the
     ///   comparison; the validation method may be invoked long after initialization.
-    @inlinable
     public init(fixedValidationTime: Date? = nil) {
         self.versionPolicy = VersionPolicy()
         self.expiryPolicy = ExpiryPolicy(fixedValidationTime: fixedValidationTime)
@@ -88,8 +77,6 @@ public struct RFC5280Policy: VerifierPolicy, Sendable {
     public static func withValidityCheckDisabled() -> RFC5280Policy {
         return RFC5280Policy()
     }
-
-    @inlinable
     public func chainMeetsPolicyRequirements(chain: UnverifiedCertificateChain) -> PolicyEvaluationResult {
         if case .failsToMeetPolicy(let reason) = self.versionPolicy.chainMeetsPolicyRequirements(chain: chain) {
             return .failsToMeetPolicy(reason: reason)

@@ -22,7 +22,6 @@ import Crypto
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 public enum CMS: Sendable {
     @_spi(CMS)
-    @inlinable
     public static func sign<Bytes: DataProtocol>(
         _ bytes: Bytes,
         signatureAlgorithm: Certificate.SignatureAlgorithm,
@@ -57,7 +56,6 @@ public enum CMS: Sendable {
     }
 
     @_spi(CMS)
-    @inlinable
     public static func sign<Bytes: DataProtocol>(
         _ bytes: Bytes,
         additionalIntermediateCertificates: [Certificate] = [],
@@ -76,8 +74,6 @@ public enum CMS: Sendable {
             detached: detached
         )
     }
-
-    @inlinable
     static func signWithSigningTime<Bytes: DataProtocol>(
         _ bytes: Bytes,
         signatureAlgorithm: Certificate.SignatureAlgorithm,
@@ -129,7 +125,6 @@ public enum CMS: Sendable {
     }
 
     @_spi(CMS)
-    @inlinable
     public static func sign(
         signatureBytes: ASN1OctetString,
         signatureAlgorithm: Certificate.SignatureAlgorithm,
@@ -146,8 +141,6 @@ public enum CMS: Sendable {
 
         return try serializeSignedData(signedData)
     }
-
-    @inlinable
     static func serializeSignedData(
         _ contentInfo: CMSContentInfo
     ) throws -> [UInt8] {
@@ -155,8 +148,6 @@ public enum CMS: Sendable {
         try serializer.serialize(contentInfo)
         return serializer.serializedBytes
     }
-
-    @inlinable
     static func generateSignedData(
         signatureBytes: ASN1OctetString,
         signatureAlgorithm: Certificate.SignatureAlgorithm,
@@ -173,8 +164,6 @@ public enum CMS: Sendable {
             withContent: nil as Data?
         )
     }
-
-    @inlinable
     static func generateSignedData<Bytes: DataProtocol>(
         signatureBytes: ASN1OctetString,
         signatureAlgorithm: Certificate.SignatureAlgorithm,
@@ -211,7 +200,6 @@ public enum CMS: Sendable {
     }
 
     @_spi(CMS)
-    @inlinable
     public static func isValidAttachedSignature<SignatureBytes: DataProtocol>(
         signatureBytes: SignatureBytes,
         additionalIntermediateCertificates: [Certificate] = [],
@@ -242,7 +230,6 @@ public enum CMS: Sendable {
     }
 
     @_spi(CMS)
-    @inlinable
     public static func isValidSignature<
         DataBytes: DataProtocol,
         SignatureBytes: DataProtocol
@@ -449,8 +436,6 @@ public enum CMS: Sendable {
 
     public struct Valid: Hashable, Sendable {
         public var signer: Certificate
-
-        @inlinable
         public init(signer: Certificate) {
             self.signer = signer
         }
@@ -464,8 +449,6 @@ public enum CMS: Sendable {
             public var validationFailures: [VerificationResult.PolicyFailure]
 
             public var signer: Certificate
-
-            @inlinable
             public init(validationFailures: [VerificationResult.PolicyFailure], signer: Certificate) {
                 self.validationFailures = validationFailures
                 self.signer = signer
@@ -474,14 +457,10 @@ public enum CMS: Sendable {
 
         public struct InvalidCMSBlock: Hashable, Swift.Error {
             public var reason: String
-
-            @inlinable
             public init(reason: String) {
                 self.reason = reason
             }
         }
-
-        @inlinable
         internal init(invalidCMSBlockReason: String) {
             self = .invalidCMSBlock(.init(reason: invalidCMSBlockReason))
         }
@@ -490,7 +469,6 @@ public enum CMS: Sendable {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension Array where Element == Certificate {
-    @usableFromInline
     func certificate(signerInfo: CMSSignerInfo) throws -> Certificate? {
         switch signerInfo.signerIdentifier {
         case .issuerAndSerialNumber(let issuerAndSerialNumber):
@@ -508,7 +486,6 @@ extension Array where Element == Certificate {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension Certificate.Signature {
-    @inlinable
     init(signatureAlgorithm: Certificate.SignatureAlgorithm, signatureBytes: ASN1OctetString) throws {
         self = try Certificate.Signature(
             signatureAlgorithm: signatureAlgorithm,

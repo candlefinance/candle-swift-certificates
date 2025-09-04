@@ -27,7 +27,6 @@ extension RelativeDistinguishedName {
     /// be derived by inspection.
     public struct Attribute {
         public struct Value: Hashable, Sendable {
-            @usableFromInline
             enum Storage: Hashable, Sendable {
                 /// ``ASN1PrintableString``
                 case printable(String)
@@ -39,11 +38,7 @@ extension RelativeDistinguishedName {
                 /// This invariant must not be violated or otherwise the synthesised `Hashable` would be wrong.
                 case any(ASN1Any)
             }
-
-            @usableFromInline
             var storage: Storage
-
-            @inlinable
             init(storage: Storage) {
                 self.storage = storage
             }
@@ -60,7 +55,6 @@ extension RelativeDistinguishedName {
         ///
         /// - Parameter type: The type of the attribute.
         /// - Parameter value: The value of the attribute.
-        @inlinable
         public init(type: ASN1ObjectIdentifier, value: Attribute.Value) {
             self.type = type
             self.value = value
@@ -69,7 +63,6 @@ extension RelativeDistinguishedName {
 }
 
 extension ASN1Any {
-    @inlinable
     init(_ storage: RelativeDistinguishedName.Attribute.Value.Storage) {
         switch storage {
         case .printable(let printableString):
@@ -88,7 +81,6 @@ extension ASN1Any {
 }
 
 extension ASN1Any {
-    @inlinable
     public init(_ value: RelativeDistinguishedName.Attribute.Value) {
         self = ASN1Any(value.storage)
     }
@@ -97,14 +89,12 @@ extension ASN1Any {
 extension RelativeDistinguishedName.Attribute.Value {
     /// A helper constructor to construct a ``RelativeDistinguishedName/Attribute/Value`` with an `ASN1UTF8String`.
     /// - Parameter utf8String: The value of the attribute.
-    @inlinable
     public init(utf8String: String) {
         self.storage = .utf8(utf8String)
     }
 
     /// A helper constructor to construct a ``RelativeDistinguishedName/Attribute/Value`` with an `ASN1PrintableString`.
     /// - Parameter printableString: The value of the attribute.
-    @inlinable
     public init(printableString: String) throws {
         // verify that it is indeed a printable string
         _ = try ASN1PrintableString(printableString)
@@ -112,14 +102,11 @@ extension RelativeDistinguishedName.Attribute.Value {
     }
 
     /// A helper constructor to construct a ``RelativeDistinguishedName/Attribute/Value`` with an `ASN1IA5String`.
-    @inlinable
     public init(ia5String: String) throws {
         // verify that it is indeed a ASN1IA5String
         _ = try ASN1IA5String(ia5String)
         self.storage = .ia5(ia5String)
     }
-
-    @inlinable
     public init(asn1Any: ASN1Any) {
         do {
             self.storage = try .init(asn1Any: asn1Any)
@@ -130,7 +117,6 @@ extension RelativeDistinguishedName.Attribute.Value {
 }
 
 extension RelativeDistinguishedName.Attribute.Value.Storage: DERParseable, DERSerializable {
-    @inlinable
     init(derEncoded node: SwiftASN1.ASN1Node) throws {
         do {
             switch node.identifier {
@@ -147,8 +133,6 @@ extension RelativeDistinguishedName.Attribute.Value.Storage: DERParseable, DERSe
             self = .any(ASN1Any(derEncoded: node))
         }
     }
-
-    @inlinable
     func serialize(into coder: inout SwiftASN1.DER.Serializer) throws {
         switch self {
         case .printable(let printableString):
@@ -169,7 +153,6 @@ extension RelativeDistinguishedName.Attribute.Value.Storage: DERParseable, DERSe
 }
 
 extension RelativeDistinguishedName.Attribute.Value: CustomStringConvertible {
-    @inlinable
     public var description: String {
         let text: String
         if let string = String(self) {
@@ -221,7 +204,6 @@ extension RelativeDistinguishedName.Attribute: Hashable {}
 extension RelativeDistinguishedName.Attribute: Sendable {}
 
 extension RelativeDistinguishedName.Attribute: CustomStringConvertible {
-    @inlinable
     public var description: String {
         let attributeKey: String
         switch self.type {
@@ -252,12 +234,9 @@ extension RelativeDistinguishedName.Attribute: CustomStringConvertible {
 }
 
 extension RelativeDistinguishedName.Attribute: DERImplicitlyTaggable {
-    @inlinable
     public static var defaultIdentifier: ASN1Identifier {
         .sequence
     }
-
-    @inlinable
     public init(derEncoded rootNode: ASN1Node, withIdentifier identifier: ASN1Identifier) throws {
         self = try DER.sequence(rootNode, identifier: identifier) { nodes in
             let type = try ASN1ObjectIdentifier(derEncoded: &nodes)
@@ -265,8 +244,6 @@ extension RelativeDistinguishedName.Attribute: DERImplicitlyTaggable {
             return .init(type: type, value: value)
         }
     }
-
-    @inlinable
     public func serialize(into coder: inout DER.Serializer, withIdentifier identifier: ASN1Identifier) throws {
         try coder.appendConstructedNode(identifier: identifier) { coder in
             try coder.serialize(self.type)
@@ -281,7 +258,6 @@ extension RelativeDistinguishedName.Attribute {
     ///
     /// - Parameter type: The type of the attribute.
     /// - Parameter utf8String: The value of the attribute.
-    @inlinable
     public init(type: ASN1ObjectIdentifier, utf8String: String) {
         self.type = type
         self.value = .init(utf8String: utf8String)
@@ -292,13 +268,10 @@ extension RelativeDistinguishedName.Attribute {
     ///
     /// - Parameter type: The type of the attribute.
     /// - Parameter printableString: The value of the attribute.
-    @inlinable
     public init(type: ASN1ObjectIdentifier, printableString: String) throws {
         self.type = type
         self.value = try .init(printableString: printableString)
     }
-
-    @inlinable
     public init(type: ASN1ObjectIdentifier, ia5String: String) throws {
         self.type = type
         self.value = try .init(ia5String: ia5String)
@@ -308,7 +281,6 @@ extension RelativeDistinguishedName.Attribute {
     ///
     /// - Parameter type: The type of the attribute.
     /// - Parameter value: The value of the attribute, wrapped in `ASN1Any`.
-    @inlinable
     public init(type: ASN1ObjectIdentifier, value: ASN1Any) {
         self.type = type
         self.value = .init(asn1Any: value)
@@ -376,7 +348,6 @@ extension String {
 }
 
 extension RandomAccessCollection {
-    @inlinable
     func suffix(while predicate: (Element) -> Bool) -> SubSequence {
         var index = self.endIndex
         if index == self.startIndex {

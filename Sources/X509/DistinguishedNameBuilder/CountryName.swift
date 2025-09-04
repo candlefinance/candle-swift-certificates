@@ -24,12 +24,9 @@ public struct CountryName: RelativeDistinguishedNameConvertible, Sendable {
     /// Construct a new country name
     ///
     /// - Parameter name: The value of the country name
-    @inlinable
     public init(_ name: String) {
         self.name = name
     }
-
-    @inlinable
     public func makeRDN() throws -> RelativeDistinguishedName {
         return RelativeDistinguishedName(
             try .init(type: .RDNAttributeType.countryName, printableString: name)

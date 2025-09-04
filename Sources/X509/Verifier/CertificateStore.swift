@@ -17,11 +17,7 @@ import _CertificateInternals
 /// A collection of ``Certificate`` objects for use in a verifier.
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 public struct CertificateStore: Sendable, Hashable {
-
-    @usableFromInline
     var backing: Backing
-
-    @inlinable
     public init() {
         self.init([])
     }
@@ -30,13 +26,11 @@ public struct CertificateStore: Sendable, Hashable {
     /// implementation it can be used interchangeably. For details on why one
     /// may decide to implement a ``CustomCertificateStore``, please see the
     /// documentation on that protocol.
-    @inlinable
     public init(custom: some CustomCertificateStore) {
         backing = .custom(AnyCustomCertificateStore(custom))
     }
 
     /// Initialize a certificate store from a sequence of certificates.
-    @inlinable
     public init(_ certificates: some Sequence<Certificate>) {
         backing = .concrete(.init(certificates))
     }
@@ -44,25 +38,17 @@ public struct CertificateStore: Sendable, Hashable {
     init(systemTrustStore: Bool) {
         backing = .concrete(.init(systemTrustStore: systemTrustStore))
     }
-
-    @inlinable
     public mutating func append(_ certificate: Certificate) {
         self.append(contentsOf: CollectionOfOne(certificate))
     }
-
-    @inlinable
     public mutating func append(contentsOf certificates: some Sequence<Certificate>) {
         backing.append(contentsOf: certificates)
     }
-
-    @inlinable
     public func appending(contentsOf certificates: some Sequence<Certificate>) -> Self {
         var copy = self
         copy.append(contentsOf: certificates)
         return copy
     }
-
-    @inlinable
     public func appending(_ certificate: Certificate) -> Self {
         var copy = self
         copy.append(certificate)
@@ -79,39 +65,26 @@ public struct CertificateStore: Sendable, Hashable {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension CertificateStore {
-    @usableFromInline
     struct ConcreteBacking: Sendable, Hashable {
-        @usableFromInline
         var systemTrustStore: Bool
-        @usableFromInline
         var additionalTrustRoots: [DistinguishedName: [Certificate]]
-
-        @inlinable
         public init(_ certificates: some Sequence<Certificate>) {
             self.systemTrustStore = false
             self.additionalTrustRoots = Dictionary(grouping: certificates, by: \.subject)
         }
-
-        @inlinable
         init(systemTrustStore: Bool) {
             self.systemTrustStore = systemTrustStore
             self.additionalTrustRoots = [:]
         }
-
-        @inlinable
         mutating func append(contentsOf certificates: some Sequence<Certificate>) {
             for certificate in certificates {
                 self.additionalTrustRoots[certificate.subject, default: []].append(certificate)
             }
         }
     }
-
-    @usableFromInline
     enum Backing: Sendable, Hashable {
         case custom(AnyCustomCertificateStore)
         case concrete(ConcreteBacking)
-
-        @inlinable
         mutating func append(contentsOf certificates: some Sequence<Certificate>) {
             switch self {
             case .custom(var inner):
@@ -127,7 +100,6 @@ extension CertificateStore {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension CertificateStore {
-    @usableFromInline
     enum Resolved: Sendable {
         case custom(AnyCustomCertificateStore)
         case concrete(ConcreteResolved)
@@ -136,7 +108,6 @@ extension CertificateStore {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension CertificateStore.Resolved {
-    @inlinable
     subscript(subject: DistinguishedName) -> [Certificate]? {
         get async {
             switch self {
@@ -145,8 +116,6 @@ extension CertificateStore.Resolved {
             }
         }
     }
-
-    @inlinable
     func contains(_ certificate: Certificate) async -> Bool {
         switch self {
         case .custom(let inner): await inner.contains(certificate)
@@ -157,13 +126,8 @@ extension CertificateStore.Resolved {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension CertificateStore {
-    @usableFromInline
     struct ConcreteResolved: Sendable {
-
-        @usableFromInline
         var systemTrustRoots: [DistinguishedName: [Certificate]]
-
-        @usableFromInline
         var additionalTrustRoots: [DistinguishedName: [Certificate]]
 
         init(_ store: ConcreteBacking, diagnosticsCallback: ((VerificationDiagnostic) -> Void)?) async {
@@ -185,7 +149,6 @@ extension CertificateStore {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension CertificateStore.ConcreteResolved {
-    @inlinable
     subscript(subject: DistinguishedName) -> [Certificate]? {
         get {
             var matchingCertificates: [Certificate] = []
@@ -204,8 +167,6 @@ extension CertificateStore.ConcreteResolved {
             return nil
         }
     }
-
-    @inlinable
     func contains(_ certificate: Certificate) -> Bool {
         if systemTrustRoots[certificate.subject]?.contains(certificate) == true {
             return true
@@ -221,7 +182,6 @@ extension CertificateStore.ConcreteResolved {
 
 extension Array {
     /// non-allocating version of `append(contentsOf:)` if `self` is empty
-    @inlinable
     mutating func appendOrReplaceIfEmpty(withContentsOf newElements: [Element]) {
         if self.isEmpty {
             self = newElements

@@ -216,8 +216,6 @@ extension VerificationDiagnostic {
             )
         )
     }
-
-    @usableFromInline
     static func loadingTrustRootsFailed(
         _ error: any Error
     ) -> Self {
@@ -347,7 +345,6 @@ extension VerificationDiagnostic.Storage {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension Certificate.Extensions {
-    @inlinable
     func unhandledCriticalExtensions(
         for handledCriticalExtensions: [ASN1ObjectIdentifier]
     ) -> some Sequence<Certificate.Extension> {

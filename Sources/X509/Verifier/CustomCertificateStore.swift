@@ -36,29 +36,19 @@ public protocol CustomCertificateStore: Sendable, Hashable {
 }
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
-@usableFromInline
 struct AnyCustomCertificateStore: CustomCertificateStore {
-    @usableFromInline
     var value: any DynCustomCertificateStore
-
-    @usableFromInline
     init<T: CustomCertificateStore>(_ value: T) {
         self.value = Backing(value)
     }
-
-    @inlinable
     subscript(subject: DistinguishedName) -> [Certificate]? {
         get async {
             await value[subject]
         }
     }
-
-    @inlinable
     func contains(_ certificate: Certificate) async -> Bool {
         await value.contains(certificate)
     }
-
-    @inlinable
     mutating func append(contentsOf certificates: some Sequence<Certificate>) {
         value.append(contentsOf: certificates)
     }
@@ -81,7 +71,6 @@ extension AnyCustomCertificateStore: Hashable {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension AnyCustomCertificateStore {
-    @usableFromInline
     protocol DynCustomCertificateStore: CustomCertificateStore {
         func isEqual(_ rhs: any DynCustomCertificateStore, recurse: Bool) -> Bool
     }
@@ -105,8 +94,6 @@ extension AnyCustomCertificateStore {
         func contains(_ certificate: Certificate) async -> Bool {
             await value.contains(certificate)
         }
-
-        @inlinable
         mutating func append(contentsOf certificates: some Sequence<Certificate>) {
             value.append(contentsOf: certificates)
         }

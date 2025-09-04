@@ -96,11 +96,7 @@ final class CertificateStoreTests: XCTestCase {
                 self.trustRoots[normalizeDistinguishedName(certificate.subject), default: []].append(certificate)
             }
         }
-
-        @usableFromInline
         var trustRoots: [DistinguishedName: [Certificate]]
-
-        @inlinable
         public init(_ certificates: some Sequence<Certificate>) {
             self.trustRoots = Dictionary(grouping: certificates) {
                 normalizeDistinguishedName($0.subject)

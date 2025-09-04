@@ -39,11 +39,9 @@ import Musl
 /// defines the common algorithm used for validating that an X.509 certificate
 /// is valid for a given service
 public struct ServerIdentityPolicy: Sendable {
-    @usableFromInline
     var serverHostname: LazyServerHostname?
 
     // This field is `var` becuase we lazily convert from String to something more useful, if needed.
-    @usableFromInline
     var serverIP: LazyIPAddress?
 
     /// Constructs a new ``ServerIdentityPolicy``.
@@ -51,7 +49,6 @@ public struct ServerIdentityPolicy: Sendable {
     /// - parameters:
     ///     - serverHostname: The hostname used to connect to the server.
     ///     - serverIP: The IP address of the server, if known.
-    @inlinable
     public init(
         serverHostname: String?,
         serverIP: String?
@@ -63,12 +60,9 @@ public struct ServerIdentityPolicy: Sendable {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension ServerIdentityPolicy: VerifierPolicy {
-    @inlinable
     public var verifyingCriticalExtensions: [ASN1ObjectIdentifier] {
         [.X509ExtensionID.subjectAlternativeName]
     }
-
-    @inlinable
     public mutating func chainMeetsPolicyRequirements(chain: UnverifiedCertificateChain) -> PolicyEvaluationResult {
         let targetIP = self.serverIP.convert()
         let targetHostname = self.serverHostname.convert()
@@ -87,25 +81,18 @@ extension ServerIdentityPolicy: VerifierPolicy {
 }
 
 extension ServerIdentityPolicy {
-    @usableFromInline
     enum IPAddress: Sendable {
         case v4(in_addr)
         case v6(in6_addr)
     }
-
-    @usableFromInline
     enum LazyIPAddress: Sendable {
         case ipAddress(IPAddress)
         case string(String)
     }
-
-    @usableFromInline
     enum LazyServerHostname: Sendable {
         case string(String)
         case prepared(PreparedServerHostname)
     }
-
-    @usableFromInline
     struct PreparedServerHostname: Sendable {
         var bytes: ArraySlice<UInt8>
         var firstPeriodIndex: ArraySlice<UInt8>.Index?
@@ -122,7 +109,6 @@ extension ServerIdentityPolicy {
         /// the string, once to get a buffer pointer to a contiguous buffer, once
         /// to confirm the string is ASCII, and once to find the first period for matching wildcards.
         /// Here we can do that all in one loop.
-        @usableFromInline
         init?(lowercaseASCIIBytes string: String) {
             let utf8View = string.utf8
             self.firstPeriodIndex = nil
@@ -185,7 +171,6 @@ extension Optional where Wrapped == ServerIdentityPolicy.LazyIPAddress {
     /// returns it.
     ///
     /// Does nothing if the value is nil.
-    @usableFromInline
     mutating func convert() -> ServerIdentityPolicy.IPAddress? {
         switch self {
         case .some(.ipAddress(let address)):
@@ -214,7 +199,6 @@ extension Optional where Wrapped == ServerIdentityPolicy.LazyServerHostname {
     /// returns it.
     ///
     /// Does nothing if the value is nil. Nils the value if the conversion fails.
-    @usableFromInline
     mutating func convert() -> ServerIdentityPolicy.PreparedServerHostname? {
         switch self {
         case .none:
@@ -264,7 +248,6 @@ extension Certificate {
     ///
     /// The algorithm we're implementing is specified in RFC 6125 Section 6 if you want to
     /// follow along at home.
-    @usableFromInline
     internal func hasValidIdentityForService(
         serverHostname: ServerIdentityPolicy.PreparedServerHostname?,
         serverIP: ServerIdentityPolicy.IPAddress?

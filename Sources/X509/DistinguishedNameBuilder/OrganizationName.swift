@@ -24,12 +24,9 @@ public struct OrganizationName: RelativeDistinguishedNameConvertible, Sendable {
     /// Construct a new organization name
     ///
     /// - Parameter name: The value of the organization name
-    @inlinable
     public init(_ name: String) {
         self.name = name
     }
-
-    @inlinable
     public func makeRDN() throws -> RelativeDistinguishedName {
         return RelativeDistinguishedName(
             .init(type: .RDNAttributeType.organizationName, utf8String: name)

@@ -13,21 +13,12 @@
 //===----------------------------------------------------------------------===//
 
 import SwiftASN1
-
-@usableFromInline
 struct SubjectPublicKeyInfo: DERImplicitlyTaggable, Hashable, Sendable {
-    @inlinable
     static var defaultIdentifier: ASN1Identifier {
         .sequence
     }
-
-    @usableFromInline
     var algorithmIdentifier: AlgorithmIdentifier
-
-    @usableFromInline
     var key: ASN1BitString
-
-    @inlinable
     init(derEncoded rootNode: ASN1Node, withIdentifier identifier: ASN1Identifier) throws {
         // The SPKI block looks like this:
         //
@@ -42,20 +33,14 @@ struct SubjectPublicKeyInfo: DERImplicitlyTaggable, Hashable, Sendable {
             return SubjectPublicKeyInfo(algorithmIdentifier: algorithmIdentifier, key: key)
         }
     }
-
-    @inlinable
     init(algorithmIdentifier: AlgorithmIdentifier, key: ASN1BitString) {
         self.algorithmIdentifier = algorithmIdentifier
         self.key = key
     }
-
-    @inlinable
     internal init(algorithmIdentifier: AlgorithmIdentifier, key: [UInt8]) {
         self.algorithmIdentifier = algorithmIdentifier
         self.key = ASN1BitString(bytes: key[...])
     }
-
-    @inlinable
     func serialize(into coder: inout DER.Serializer, withIdentifier identifier: ASN1Identifier) throws {
         try coder.appendConstructedNode(identifier: identifier) { coder in
             try coder.serialize(self.algorithmIdentifier)

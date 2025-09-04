@@ -59,7 +59,6 @@ extension Certificate {
         ///   - oid: The identifier for this extension type.
         ///   - critical: Whether this extension must be processed in order to trust the certificate.
         ///   - value: The encoded bytes of the value of this extension.
-        @inlinable
         public init(oid: ASN1ObjectIdentifier, critical: Bool, value: ArraySlice<UInt8>) {
             self.oid = oid
             self.critical = critical
@@ -107,12 +106,9 @@ extension Certificate.Extension: CustomStringConvertible {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension Certificate.Extension: DERImplicitlyTaggable {
-    @inlinable
     public static var defaultIdentifier: ASN1Identifier {
         .sequence
     }
-
-    @inlinable
     public init(derEncoded rootNode: ASN1Node, withIdentifier identifier: ASN1Identifier) throws {
         self = try DER.sequence(rootNode, identifier: identifier) { nodes in
             let extensionID = try ASN1ObjectIdentifier(derEncoded: &nodes)
@@ -122,8 +118,6 @@ extension Certificate.Extension: DERImplicitlyTaggable {
             return Certificate.Extension(oid: extensionID, critical: critical, value: value.bytes)
         }
     }
-
-    @inlinable
     public func serialize(into coder: inout DER.Serializer, withIdentifier identifier: ASN1Identifier) throws {
         try coder.appendConstructedNode(identifier: identifier) { coder in
             try coder.serialize(self.oid)

@@ -20,20 +20,17 @@ import SwiftASN1
 /// Users of the certificate may validate that these names correspond to a name they are
 /// expecting, depending on the context.
 public struct SubjectAlternativeNames {
-    @usableFromInline
     var names: [GeneralName]
 
     /// Construct a Subject Alternative Name extension from a sequence of
     /// ``GeneralName``s.
     ///
     /// - Parameter names: The names to bind to the subject of the certificate.
-    @inlinable
     public init<Names: Sequence>(_ names: Names) where Names.Element == GeneralName {
         self.names = Array(names)
     }
 
     /// Construct a Subject Alternative Name extension that attests to no names.
-    @inlinable
     public init() {
         self.names = []
     }
@@ -44,7 +41,6 @@ public struct SubjectAlternativeNames {
     /// - Parameter ext: The ``Certificate/Extension`` to unwrap
     /// - Throws: if the ``Certificate/Extension/oid`` is not equal to
     ///     `ASN1ObjectIdentifier.X509ExtensionID.subjectAlternativeName`.
-    @inlinable
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
     public init(_ ext: Certificate.Extension) throws {
         guard ext.oid == .X509ExtensionID.subjectAlternativeName else {
@@ -75,17 +71,12 @@ extension SubjectAlternativeNames: CustomDebugStringConvertible {
 }
 
 extension SubjectAlternativeNames: RandomAccessCollection, MutableCollection, RangeReplaceableCollection {
-    @inlinable
     public var startIndex: Int {
         self.names.startIndex
     }
-
-    @inlinable
     public var endIndex: Int {
         self.names.endIndex
     }
-
-    @inlinable
     public subscript(position: Int) -> GeneralName {
         get {
             self.names[position]
@@ -94,8 +85,6 @@ extension SubjectAlternativeNames: RandomAccessCollection, MutableCollection, Ra
             self.names[position] = newValue
         }
     }
-
-    @inlinable
     public mutating func replaceSubrange<NewElements>(_ subrange: Range<Int>, with newElements: NewElements)
     where NewElements: Collection, GeneralName == NewElements.Element {
         self.names.replaceSubrange(subrange, with: newElements)
@@ -109,7 +98,6 @@ extension Certificate.Extension {
     /// - Parameters:
     ///   - san: The extension to wrap
     ///   - critical: Whether this extension should have the critical bit set.
-    @inlinable
     public init(_ san: SubjectAlternativeNames, critical: Bool) throws {
         let asn1Representation = GeneralNames(san.names)
         var serializer = DER.Serializer()

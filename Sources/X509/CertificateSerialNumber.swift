@@ -29,21 +29,18 @@ extension Certificate {
 
         /// Construct a serial number from its raw big-endian bytes.
         /// - Parameter bytes: The raw big-endian bytes of the serial number.
-        @inlinable
         public init(bytes: ArraySlice<UInt8>) {
             self.bytes = ArraySlice(normalisingToASN1IntegerForm: bytes)
         }
 
         /// Construct a serial number from its raw big-endian bytes.
         /// - Parameter bytes: The raw big-endian bytes of the serial number.
-        @inlinable
         public init(bytes: [UInt8]) {
             self.bytes = ArraySlice(normalisingToASN1IntegerForm: bytes[...])
         }
 
         /// Construct a serial number from its raw big-endian bytes.
         /// - Parameter bytes: The raw big-endian bytes of the serial number.
-        @inlinable
         public init<Bytes: Collection>(bytes: Bytes) where Bytes.Element == UInt8 {
             self.bytes = ArraySlice(normalisingToASN1IntegerForm: bytes)
         }
@@ -58,7 +55,6 @@ extension Certificate {
         /// with a `StaticBigInt` which enables arbitrary-precision.
         ///
         /// - Parameter number: The raw big-endian bytes of the serial number.
-        @inlinable
         public init<Number: FixedWidthInteger>(_ number: Number) {
             // `IntegerBytesCollection` already trims leading zeros
             self.bytes = ArraySlice(IntegerBytesCollection(number))
@@ -68,7 +64,6 @@ extension Certificate {
         ///
         /// Serial numbers should be generated randomly, and may contain up to 20 bytes. This
         /// initializer generates an appropriate serial number.
-        @inlinable
         public init() {
             var rng = SystemRandomNumberGenerator()
             self.init(generator: &rng)
@@ -79,7 +74,6 @@ extension Certificate {
         /// Serial numbers should be generated randomly, and may contain up to 20 bytes. This
         /// initializer generates a serial number with random numbers from the given `generator`.
         /// - Parameter generator: the generator used to generate random number for the serial number
-        @inlinable
         internal init(generator: inout some RandomNumberGenerator) {
             // drop leading zeros as required by the ASN.1 spec for INTEGERs
             self.bytes = ArraySlice(normalisingToASN1IntegerForm: generator.bytes(count: 20))
@@ -105,7 +99,6 @@ extension Certificate.SerialNumber: ExpressibleByIntegerLiteral {
     /// Constructs a serial number from an integer.
     ///
     /// - Parameter number: The raw big-endian bytes of the serial number.
-    @inlinable
     public init(integerLiteral number: StaticBigInt) {
         var bytes = [UInt8]()
         let wordCount = (number.bitWidth - 1) / (MemoryLayout<UInt>.size * 8) + 1
@@ -120,7 +113,6 @@ extension Certificate.SerialNumber: ExpressibleByIntegerLiteral {
 }
 
 extension [UInt8] {
-    @inlinable
     mutating func appendBigEndianBytes(_ number: UInt) {
         let number = number.bigEndian
 

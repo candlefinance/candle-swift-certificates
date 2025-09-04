@@ -46,47 +46,30 @@
 
 extension Int64 {
     // 2000-03-01 (mod 400 year, immediately after feb29
-    @inlinable
     static var leapoch: Int64 {
         .secondsFromEpochToYear2000 + .secondsPerDay * (31 + 29)
     }
-
-    @inlinable
     static var secondsFromEpochToYear2000: Int64 {
         946_684_800
     }
-
-    @inlinable
     static var daysPer400Years: Int64 {
         365 * 400 + 97
     }
-
-    @inlinable
     static var daysPer100Years: Int64 {
         365 * 100 + 24
     }
-
-    @inlinable
     static var daysPer4Years: Int64 {
         365 * 4 + 1
     }
-
-    @inlinable
     static var secondsPerDay: Int64 {
         24 * 60 * 60
     }
-
-    @inlinable
     static var secondsPerYear: Int64 {
         .secondsPerDay * .daysPerYear
     }
-
-    @inlinable
     static var daysPerYear: Int64 {
         365
     }
-
-    @inlinable
     static func daysInMonth(_ month: Int) -> Int64 {
         // This may seem weird, but these months are indexed from _March_.
         // Thus, month 0 is March, month 11 is February.
@@ -101,8 +84,6 @@ extension Int64 {
             fatalError()
         }
     }
-
-    @inlinable
     var utcDateFromTimestamp: (year: Int, month: Int, day: Int, hours: Int, minutes: Int, seconds: Int) {
         let secs = self - .leapoch
         var (days, remsecs) = secs.quotientAndRemainder(dividingBy: 86400)
@@ -177,8 +158,6 @@ extension Int64 {
             seconds: Int(remsecs % 60)
         )
     }
-
-    @inlinable
     init(timestampFromUTCDate date: (year: Int, month: Int, day: Int, hours: Int, minutes: Int, seconds: Int)) {
         assert((1...12).contains(date.month))
         assert((0...31).contains(date.day))
@@ -200,8 +179,6 @@ extension Int64 {
 
         self = seconds
     }
-
-    @inlinable
     static func yearToSeconds(_ year: Int64) -> (seconds: Int64, isLeap: Bool) {
         var (cycles, rem) = (year - 100).quotientAndRemainder(dividingBy: 400)
         if rem < 0 {
@@ -250,8 +227,6 @@ extension Int64 {
                 + .secondsPerDay, isLeap: isLeap
         )
     }
-
-    @inlinable
     static func monthToSeconds(_ month: Int64, isLeap: Bool) -> Int64 {
         var secondsThroughMonth: Int64
 

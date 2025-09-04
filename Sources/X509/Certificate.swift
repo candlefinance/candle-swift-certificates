@@ -75,7 +75,6 @@ public struct Certificate {
     ///
     /// This should be set to ``Certificate/Version-swift.struct/v3`` in
     /// almost all cases.
-    @inlinable
     public var version: Version {
         self.tbsCertificate.version
     }
@@ -83,7 +82,6 @@ public struct Certificate {
     /// The serial number of this certificate.
     ///
     /// This should be a unique, large, random number.
-    @inlinable
     public var serialNumber: SerialNumber {
         self.tbsCertificate.serialNumber
     }
@@ -92,42 +90,34 @@ public struct Certificate {
     ///
     /// When validating that a certificate belongs to a service, that service should be able to
     /// produce cryptographic proof that it holds the private key associated with this public key.
-    @inlinable
     public var publicKey: PublicKey {
         self.tbsCertificate.publicKey
     }
 
     /// The date before which this certificate is not valid.
-    @inlinable
     public var notValidBefore: Date {
         Date(self.tbsCertificate.validity.notBefore)
     }
 
     /// The date after which this certificate is not valid.
-    @inlinable
     public var notValidAfter: Date {
         Date(self.tbsCertificate.validity.notAfter)
     }
 
     /// The ``DistinguishedName`` of the issuer of this certificate.
-    @inlinable
     public var issuer: DistinguishedName {
         self.tbsCertificate.issuer
     }
 
     /// The ``DistinguishedName`` of the subject of this certificate.
-    @inlinable
     public var subject: DistinguishedName {
         self.tbsCertificate.subject
     }
 
     /// The extensions on this certificate.
-    @inlinable
     public var extensions: Extensions {
         self.tbsCertificate.extensions
     }
-
-    @usableFromInline
     internal let tbsCertificate: TBSCertificate
 
     /// The bytes of the `TBSCertificate` structure.
@@ -147,14 +137,12 @@ public struct Certificate {
     ///
     /// These are preserved to ensure that we reserialize exactly what we deserialized, regardless
     /// of any canonicalisation we might do.
-    @usableFromInline
     internal let signatureBytes: ArraySlice<UInt8>
 
     /// The bytes of the ``signatureAlgorithm-swift.property``.
     ///
     /// These are preserved to ensure that we reserialize exactly what we deserialized, regardless of
     /// any canonicalisation we might do.
-    @usableFromInline
     internal let signatureAlgorithmBytes: ArraySlice<UInt8>
 
     /// Construct a certificate from constituent parts, signed by an issuer key.
@@ -177,7 +165,6 @@ public struct Certificate {
     ///   - signatureAlgorithm: The signature algorithm that will be used to produce `signature`. Must be compatible with the private key type.
     ///   - extensions: The extensions on this certificate.
     ///   - issuerPrivateKey: The private key to use to sign this certificate.
-    @inlinable
     public init(
         version: Version,
         serialNumber: SerialNumber,
@@ -236,7 +223,6 @@ public struct Certificate {
     ///   - subject: The ``DistinguishedName`` of the subject of this certificate.
     ///   - extensions: The extensions on this certificate.
     ///   - issuerPrivateKey: The private key to use to sign this certificate.
-    @inlinable
     public init(
         version: Version,
         serialNumber: SerialNumber,
@@ -261,8 +247,6 @@ public struct Certificate {
             issuerPrivateKey: issuerPrivateKey
         )
     }
-
-    @inlinable
     init(
         tbsCertificate: TBSCertificate,
         signatureAlgorithm: AlgorithmIdentifier,
@@ -282,14 +266,11 @@ public struct Certificate {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension Certificate: Hashable {
-    @inlinable
     public static func == (lhs: Certificate, rhs: Certificate) -> Bool {
         return lhs.tbsCertificateBytes == rhs.tbsCertificateBytes
             && lhs.signatureBytes == rhs.signatureBytes
             && lhs.signatureAlgorithmBytes == rhs.signatureAlgorithmBytes
     }
-
-    @inlinable
     public func hash(into hasher: inout Hasher) {
         hasher.combine(self.tbsCertificateBytes)
         hasher.combine(self.signatureBytes)
@@ -321,12 +302,9 @@ extension Certificate: CustomStringConvertible {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension Certificate: DERImplicitlyTaggable {
-    @inlinable
     public static var defaultIdentifier: ASN1Identifier {
         .sequence
     }
-
-    @inlinable
     public init(derEncoded rootNode: ASN1Node, withIdentifier identifier: ASN1Identifier) throws {
         self = try DER.sequence(rootNode, identifier: identifier) { nodes in
             guard let tbsCertificateNode = nodes.next(),
@@ -348,8 +326,6 @@ extension Certificate: DERImplicitlyTaggable {
             )
         }
     }
-
-    @inlinable
     public func serialize(into coder: inout DER.Serializer, withIdentifier identifier: ASN1Identifier) throws {
         coder.appendConstructedNode(identifier: identifier) { coder in
             coder.serializeRawBytes(self.tbsCertificateBytes)
@@ -360,7 +336,6 @@ extension Certificate: DERImplicitlyTaggable {
 }
 
 extension DER.Serializer {
-    @inlinable
     static func serialized<Element: DERSerializable>(element: Element) throws -> [UInt8] {
         var serializer = DER.Serializer()
         try serializer.serialize(element)
@@ -371,7 +346,6 @@ extension DER.Serializer {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension Certificate: PEMRepresentable {
-    @inlinable
     public static var defaultPEMDiscriminator: String { "CERTIFICATE" }
 }
 

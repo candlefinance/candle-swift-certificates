@@ -36,26 +36,14 @@ import SwiftASN1
 //   parameters [0] EXPLICIT ECDomainParameters OPTIONAL,
 //   publicKey [1] EXPLICIT BIT STRING OPTIONAL
 // }
-@usableFromInline
 struct SEC1PrivateKey: DERImplicitlyTaggable, PEMRepresentable, Sendable {
-    @usableFromInline
     static let defaultPEMDiscriminator: String = "EC PRIVATE KEY"
-
-    @inlinable
     static var defaultIdentifier: ASN1Identifier {
         return .sequence
     }
-
-    @usableFromInline
     var algorithm: AlgorithmIdentifier?
-
-    @usableFromInline
     var privateKey: ASN1OctetString
-
-    @usableFromInline
     var publicKey: ASN1BitString?
-
-    @inlinable
     init(derEncoded rootNode: ASN1Node, withIdentifier identifier: ASN1Identifier) throws {
         self = try DER.sequence(rootNode, identifier: identifier) { nodes in
             let version = try Int(derEncoded: &nodes)
@@ -75,8 +63,6 @@ struct SEC1PrivateKey: DERImplicitlyTaggable, PEMRepresentable, Sendable {
             return try .init(privateKey: privateKey, algorithm: parameters, publicKey: publicKey)
         }
     }
-
-    @inlinable
     internal init(privateKey: ASN1OctetString, algorithm: ASN1ObjectIdentifier?, publicKey: ASN1BitString?) throws {
         self.privateKey = privateKey
         self.publicKey = publicKey
@@ -93,15 +79,11 @@ struct SEC1PrivateKey: DERImplicitlyTaggable, PEMRepresentable, Sendable {
             }
         }
     }
-
-    @inlinable
     init(privateKey: [UInt8], algorithm: AlgorithmIdentifier?, publicKey: [UInt8]) {
         self.privateKey = ASN1OctetString(contentBytes: privateKey[...])
         self.algorithm = algorithm
         self.publicKey = ASN1BitString(bytes: publicKey[...])
     }
-
-    @inlinable
     func serialize(into coder: inout DER.Serializer, withIdentifier identifier: ASN1Identifier) throws {
         try coder.appendConstructedNode(identifier: identifier) { coder in
             try coder.serialize(1)  // version

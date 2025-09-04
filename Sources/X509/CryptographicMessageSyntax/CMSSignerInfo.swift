@@ -37,28 +37,22 @@ import SwiftASN1
 /// - Note: If the `SignerIdentifier` is the CHOICE `issuerAndSerialNumber`,
 /// then the `version` MUST be 1.  If the `SignerIdentifier` is `subjectKeyIdentifier`,
 /// then the `version` MUST be 3.
-@usableFromInline
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 struct CMSSignerInfo: DERImplicitlyTaggable, BERImplicitlyTaggable, Hashable, Sendable {
-    @usableFromInline
     enum Error: Swift.Error {
         case versionAndSignerIdentifierMismatch(String)
     }
-
-    @inlinable
     static var defaultIdentifier: ASN1Identifier {
         .sequence
     }
 
-    @usableFromInline var version: CMSVersion
-    @usableFromInline var signerIdentifier: CMSSignerIdentifier
-    @usableFromInline var digestAlgorithm: AlgorithmIdentifier
-    @usableFromInline var signedAttrs: [CMSAttribute]?
-    @usableFromInline var signatureAlgorithm: AlgorithmIdentifier
-    @usableFromInline var signature: ASN1OctetString
-    @usableFromInline var unsignedAttrs: [CMSAttribute]?
-
-    @inlinable
+    var version: CMSVersion
+    var signerIdentifier: CMSSignerIdentifier
+    var digestAlgorithm: AlgorithmIdentifier
+    var signedAttrs: [CMSAttribute]?
+    var signatureAlgorithm: AlgorithmIdentifier
+    var signature: ASN1OctetString
+    var unsignedAttrs: [CMSAttribute]?
     init(
         signerIdentifier: CMSSignerIdentifier,
         digestAlgorithm: AlgorithmIdentifier,
@@ -80,8 +74,6 @@ struct CMSSignerInfo: DERImplicitlyTaggable, BERImplicitlyTaggable, Hashable, Se
         self.signature = signature
         self.unsignedAttrs = unsignedAttrs
     }
-
-    @inlinable
     init(
         version: CMSVersion,
         signerIdentifier: CMSSignerIdentifier,
@@ -99,8 +91,6 @@ struct CMSSignerInfo: DERImplicitlyTaggable, BERImplicitlyTaggable, Hashable, Se
         self.signature = signature
         self.unsignedAttrs = unsignedAttrs
     }
-
-    @inlinable
     init(derEncoded rootNode: ASN1Node, withIdentifier identifier: ASN1Identifier) throws {
         self = try DER.sequence(rootNode, identifier: identifier) { nodes in
             let version = try CMSVersion(rawValue: Int(derEncoded: &nodes))
@@ -153,8 +143,6 @@ struct CMSSignerInfo: DERImplicitlyTaggable, BERImplicitlyTaggable, Hashable, Se
             )
         }
     }
-
-    @inlinable
     init(berEncoded rootNode: ASN1Node, withIdentifier identifier: ASN1Identifier) throws {
         self = try BER.sequence(rootNode, identifier: identifier) { nodes in
             let version = try CMSVersion(rawValue: Int(derEncoded: &nodes))
@@ -208,8 +196,6 @@ struct CMSSignerInfo: DERImplicitlyTaggable, BERImplicitlyTaggable, Hashable, Se
             )
         }
     }
-
-    @inlinable
     func serialize(into coder: inout DER.Serializer, withIdentifier identifier: ASN1Identifier) throws {
         try coder.appendConstructedNode(identifier: identifier) { coder in
             try coder.serialize(self.version.rawValue)
@@ -230,7 +216,6 @@ struct CMSSignerInfo: DERImplicitlyTaggable, BERImplicitlyTaggable, Hashable, Se
 // MARK: - SignedAttrs
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension CMSSignerInfo {
-    @inlinable
     /// Returns the  signedAttrs in DER encoded form by re-serializes the parsed signedAttrs, or immediately returning
     /// a saved slice of the original data bytes.
     func _signedAttrsBytes() throws -> ArraySlice<UInt8> {
@@ -244,7 +229,6 @@ extension CMSSignerInfo {
 // MARK: - Attribute Getters
 
 extension Array where Element == CMSAttribute {
-    @inlinable
     subscript(oid: ASN1ObjectIdentifier) -> CMSAttribute? {
         if let attr = self.first(where: { $0.attrType == oid }) {
             return attr
@@ -254,7 +238,6 @@ extension Array where Element == CMSAttribute {
 }
 
 extension Array where Element == CMSAttribute {
-    @inlinable
     var signingTime: Date? {
         get throws {
             if let attr = self[.signingTime] {
@@ -267,8 +250,6 @@ extension Array where Element == CMSAttribute {
             return nil
         }
     }
-
-    @inlinable
     var messageDigest: ArraySlice<UInt8>? {
         get throws {
             if let attr = self[.messageDigest] {
@@ -284,12 +265,7 @@ extension Array where Element == CMSAttribute {
 }
 
 extension ASN1ObjectIdentifier {
-    @usableFromInline
     static let messageDigest: Self = [1, 2, 840, 113549, 1, 9, 4]
-
-    @usableFromInline
     static let signingTime: Self = [1, 2, 840, 113549, 1, 9, 5]
-
-    @usableFromInline
     static let contentType: Self = [1, 2, 840, 113549, 1, 9, 3]
 }

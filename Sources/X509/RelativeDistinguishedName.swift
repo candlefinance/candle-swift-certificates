@@ -34,13 +34,11 @@ import _CertificateInternals
 /// at index `i` does not guarantee it will remain at that location. As a result, ``RelativeDistinguishedName`` is
 /// not a `MutableCollection`.
 public struct RelativeDistinguishedName {
-    @usableFromInline
     var attributes: _TinyArray<Attribute>
 
     /// Construct a ``RelativeDistinguishedName`` from a sequence of ``Attribute``.
     ///
     /// - Parameter attributes: The sequence of ``Attribute``s that make up the ``DistinguishedName``.
-    @inlinable
     public init<AttributeSequence: Sequence>(_ attributes: AttributeSequence)
     where AttributeSequence.Element == RelativeDistinguishedName.Attribute {
         self.attributes = .init(attributes)
@@ -50,19 +48,15 @@ public struct RelativeDistinguishedName {
     /// Construct a ``RelativeDistinguishedName`` from a sequence of ``Attribute``.
     ///
     /// - Parameter attribute: The sequence of ``Attribute``s that make up the ``DistinguishedName``.
-    @inlinable
     public init(_ attribute: Attribute) {
         self.init(CollectionOfOne(attribute))
     }
-
-    @inlinable
     init(_ attributes: DER.LazySetOfSequence<Attribute>) throws {
         self.attributes = try .init(attributes)
         Self._sortElements(&self.attributes)
     }
 
     /// Create an empty ``RelativeDistinguishedName``.
-    @inlinable
     public init() {
         self.attributes = .init()
     }
@@ -73,17 +67,12 @@ extension RelativeDistinguishedName: Hashable {}
 extension RelativeDistinguishedName: Sendable {}
 
 extension RelativeDistinguishedName: RandomAccessCollection {
-    @inlinable
     public var startIndex: Int {
         self.attributes.startIndex
     }
-
-    @inlinable
     public var endIndex: Int {
         self.attributes.endIndex
     }
-
-    @inlinable
     public subscript(position: Int) -> RelativeDistinguishedName.Attribute {
         get {
             self.attributes[position]
@@ -93,7 +82,6 @@ extension RelativeDistinguishedName: RandomAccessCollection {
     /// Insert a new ``Attribute`` into this ``RelativeDistinguishedName``.
     ///
     /// - Parameter attribute: The ``Attribute`` to insert.
-    @inlinable
     public mutating func insert(_ attribute: RelativeDistinguishedName.Attribute) {
         self.attributes.append(attribute)
         Self._sortElements(&self.attributes)
@@ -104,7 +92,6 @@ extension RelativeDistinguishedName: RandomAccessCollection {
     /// Note that the order of `attributes` will not be preserved.
     ///
     /// - Parameter attributes: The ``Attribute``s to be inserted.
-    @inlinable
     public mutating func insert<Attributes: Collection>(contentsOf attributes: Attributes)
     where Attributes.Element == RelativeDistinguishedName.Attribute {
         self.attributes.append(contentsOf: attributes)
@@ -115,7 +102,6 @@ extension RelativeDistinguishedName: RandomAccessCollection {
     ///
     /// - Parameter index: The position of the ``Attribute`` to remove.
     /// - Returns: The ``Attribute`` at the specified index.
-    @inlinable
     @discardableResult
     public mutating func remove(at index: Int) -> Element {
         self.attributes.remove(at: index)
@@ -126,7 +112,6 @@ extension RelativeDistinguishedName: RandomAccessCollection {
     /// - Parameter shouldBeRemoved: A closure that takes an ``Attribute`` of the
     ///   ``RelativeDistinguishedName`` as its argument and returns a Boolean value indicating
     ///   whether the ``Attribute`` should be removed from the ``RelativeDistinguishedName``.
-    @inlinable
     public mutating func removeAll(where shouldBeRemoved: (Attribute) throws -> Bool) rethrows {
         try self.attributes.removeAll(where: shouldBeRemoved)
         // removing elements doesn't change the order and therefore sorting is not required
@@ -134,7 +119,6 @@ extension RelativeDistinguishedName: RandomAccessCollection {
 }
 
 extension RelativeDistinguishedName: CustomStringConvertible {
-    @inlinable
     public var description: String {
         self.lazy.map {
             String(describing: $0)
@@ -149,22 +133,15 @@ extension RelativeDistinguishedName: CustomDebugStringConvertible {
 }
 
 extension RelativeDistinguishedName: DERImplicitlyTaggable {
-    @inlinable
     public static var defaultIdentifier: ASN1Identifier {
         .set
     }
-
-    @inlinable
     public init(derEncoded rootNode: ASN1Node, withIdentifier identifier: ASN1Identifier) throws {
         try self.init(DER.lazySet(identifier: identifier, rootNode: rootNode))
     }
-
-    @inlinable
     public func serialize(into coder: inout DER.Serializer, withIdentifier identifier: ASN1Identifier) throws {
         try coder.serializeSetOf(self.attributes, identifier: identifier)
     }
-
-    @inlinable
     static func _sortElements(_ elements: inout _TinyArray<RelativeDistinguishedName.Attribute>) {
         // We keep the elements sorted at all times. This is dumb, but we assume that these objects get
         // mutated infrequently.

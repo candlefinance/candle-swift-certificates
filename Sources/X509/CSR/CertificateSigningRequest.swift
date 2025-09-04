@@ -29,13 +29,11 @@ public struct CertificateSigningRequest {
     /// The version of this CSR.
     ///
     /// This project has full support for ``CertificateSigningRequest/Version-swift.struct/v1``.
-    @inlinable
     public var version: CertificateSigningRequest.Version {
         self.info.version
     }
 
     /// The subject of this CSR.
-    @inlinable
     public var subject: DistinguishedName {
         self.info.subject
     }
@@ -43,7 +41,6 @@ public struct CertificateSigningRequest {
     /// The public key corresponding to the private key held by the subject of this CSR.
     ///
     /// This will be embedded in the resulting certificate.
-    @inlinable
     public var publicKey: Certificate.PublicKey {
         self.info.publicKey
     }
@@ -52,12 +49,9 @@ public struct CertificateSigningRequest {
     ///
     /// Certificate Signing Requests can have arbitrary attributes attached to them. Generally these are
     /// expected to be well-known attributes that will be processed by certificate authorities.
-    @inlinable
     public var attributes: CertificateSigningRequest.Attributes {
         self.info.attributes
     }
-
-    @usableFromInline
     let info: CertificationRequestInfo
 
     /// The signature algorithm corresponding to the signature produced over this CSR.
@@ -67,14 +61,8 @@ public struct CertificateSigningRequest {
     ///
     /// This signature must have been produced by the private key associated with ``publicKey``.
     public let signature: Certificate.Signature
-
-    @usableFromInline
     let infoBytes: ArraySlice<UInt8>
-
-    @usableFromInline
     let signatureAlgorithmBytes: ArraySlice<UInt8>
-
-    @usableFromInline
     let signatureBytes: ArraySlice<UInt8>
 
     /// Construct a Certificate Signing Request from constituent parts.
@@ -90,7 +78,6 @@ public struct CertificateSigningRequest {
     ///   - attributes: The attributes associated with this CSR
     ///   - signatureAlgorithm: The signature algorithm for the signature on this CSR.
     ///   - signature: The signature attached to this CSR.
-    @inlinable
     public init(
         version: Version,
         subject: DistinguishedName,
@@ -125,7 +112,6 @@ public struct CertificateSigningRequest {
     ///   - privateKey: The private key associated with this CSR.
     ///   - attributes: The attributes associated with this CSR
     ///   - signatureAlgorithm: The signature algorithm to use for the signature on this CSR.
-    @inlinable
     public init(
         version: Version,
         subject: DistinguishedName,
@@ -163,7 +149,6 @@ public struct CertificateSigningRequest {
     ///   - subject: The ``DistinguishedName`` of the subject of this CSR
     ///   - privateKey: The private key associated with this CSR.
     ///   - attributes: The attributes associated with this CSR
-    @inlinable
     public init(
         version: Version,
         subject: DistinguishedName,
@@ -178,8 +163,6 @@ public struct CertificateSigningRequest {
             signatureAlgorithm: privateKey.defaultSignatureAlgorithm
         )
     }
-
-    @inlinable
     internal init(
         info: CertificationRequestInfo,
         signatureAlgorithm: AlgorithmIdentifier,
@@ -208,7 +191,6 @@ extension CertificateSigningRequest: Sendable {}
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension CertificateSigningRequest: CustomStringConvertible {
-    @inlinable
     public var description: String {
         return
             "CertificateSigningRequest(version: \(self.version), subject: \(self.subject), publicKey: \(self.publicKey), attributes: \(self.attributes), signatureAlgorithm: \(self.signatureAlgorithm), signature: \(self.signature)"
@@ -217,12 +199,9 @@ extension CertificateSigningRequest: CustomStringConvertible {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension CertificateSigningRequest: DERImplicitlyTaggable {
-    @inlinable
     public static var defaultIdentifier: ASN1Identifier {
         .sequence
     }
-
-    @inlinable
     public init(derEncoded rootNode: ASN1Node, withIdentifier identifier: ASN1Identifier) throws {
         self = try DER.sequence(rootNode, identifier: identifier) { nodes in
             guard let infoNode = nodes.next(),
@@ -244,8 +223,6 @@ extension CertificateSigningRequest: DERImplicitlyTaggable {
             )
         }
     }
-
-    @inlinable
     public func serialize(into coder: inout DER.Serializer, withIdentifier identifier: ASN1Identifier) throws {
         coder.appendConstructedNode(identifier: identifier) { coder in
             coder.serializeRawBytes(self.infoBytes)
@@ -257,7 +234,6 @@ extension CertificateSigningRequest: DERImplicitlyTaggable {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension CertificateSigningRequest: PEMRepresentable {
-    @inlinable
     public static var defaultPEMDiscriminator: String {
         "CERTIFICATE REQUEST"
     }

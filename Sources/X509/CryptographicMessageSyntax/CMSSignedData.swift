@@ -41,21 +41,17 @@ import SwiftASN1
 ///   otherCert ANY DEFINED BY otherCertFormat }
 /// ```
 /// - Note: At the moment we don't support `crls` (`RevocationInfoChoices`)
-@usableFromInline
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 struct CMSSignedData: DERImplicitlyTaggable, BERImplicitlyTaggable, Hashable, Sendable {
-    @inlinable
     static var defaultIdentifier: ASN1Identifier {
         .sequence
     }
 
-    @usableFromInline var version: CMSVersion
-    @usableFromInline var digestAlgorithms: [AlgorithmIdentifier]
-    @usableFromInline var encapContentInfo: CMSEncapsulatedContentInfo
-    @usableFromInline var certificates: [Certificate]?
-    @usableFromInline var signerInfos: [CMSSignerInfo]
-
-    @inlinable
+    var version: CMSVersion
+    var digestAlgorithms: [AlgorithmIdentifier]
+    var encapContentInfo: CMSEncapsulatedContentInfo
+    var certificates: [Certificate]?
+    var signerInfos: [CMSSignerInfo]
     init(
         version: CMSVersion,
         digestAlgorithms: [AlgorithmIdentifier],
@@ -69,8 +65,6 @@ struct CMSSignedData: DERImplicitlyTaggable, BERImplicitlyTaggable, Hashable, Se
         self.certificates = certificates
         self.signerInfos = signerInfos
     }
-
-    @inlinable
     init(derEncoded: ASN1Node, withIdentifier identifier: ASN1Identifier) throws {
         self = try DER.sequence(derEncoded, identifier: identifier) { nodes in
             let version = try CMSVersion(rawValue: Int.init(derEncoded: &nodes))
@@ -100,8 +94,6 @@ struct CMSSignedData: DERImplicitlyTaggable, BERImplicitlyTaggable, Hashable, Se
             )
         }
     }
-
-    @inlinable
     init(berEncoded: ASN1Node, withIdentifier identifier: ASN1Identifier) throws {
         self = try BER.sequence(berEncoded, identifier: identifier) { nodes in
             let version = try CMSVersion(rawValue: Int.init(derEncoded: &nodes))
@@ -132,8 +124,6 @@ struct CMSSignedData: DERImplicitlyTaggable, BERImplicitlyTaggable, Hashable, Se
             )
         }
     }
-
-    @inlinable
     func serialize(into coder: inout DER.Serializer, withIdentifier identifier: ASN1Identifier) throws {
         try coder.appendConstructedNode(identifier: identifier) { coder in
             try coder.serialize(version.rawValue)

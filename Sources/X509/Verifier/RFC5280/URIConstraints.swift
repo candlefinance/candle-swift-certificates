@@ -54,7 +54,6 @@ extension NameConstraintsPolicy {
     ///    does not include an authority component or includes an authority
     ///    component in which the host name is specified as an IP address), then
     ///    the application MUST reject the certificate.
-    @inlinable
     static func uriNameMatchesConstraint(uriName: String, constraint: String) -> Bool {
         // If we can't parse the URL, the constraint is definitely not satisfied.
         // If there is no authority component then the last rule above applies.
@@ -74,7 +73,6 @@ extension NameConstraintsPolicy {
 }
 
 extension String {
-    @inlinable
     var isIPAddress: Bool {
         #if os(Windows)
         var v4: IN_ADDR = IN_ADDR()

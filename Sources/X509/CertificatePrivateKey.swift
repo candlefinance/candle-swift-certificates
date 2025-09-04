@@ -32,45 +32,37 @@ extension Certificate {
     /// As private keys are never sent over the wire, this type does not offer
     /// support for being unwrapped back into the underlying key types.
     public struct PrivateKey {
-        @usableFromInline
         var backing: BackingPrivateKey
-
-        @inlinable
         internal init(backing: BackingPrivateKey) {
             self.backing = backing
         }
 
         /// Construct a private key wrapping a P256 private key.
         /// - Parameter p256: The P256 private key to wrap.
-        @inlinable
         public init(_ p256: P256.Signing.PrivateKey) {
             self.backing = .p256(p256)
         }
 
         /// Construct a private key wrapping a P384 private key.
         /// - Parameter p384: The P384 private key to wrap.
-        @inlinable
         public init(_ p384: P384.Signing.PrivateKey) {
             self.backing = .p384(p384)
         }
 
         /// Construct a private key wrapping a P521 private key.
         /// - Parameter p521: The P521 private key to wrap.
-        @inlinable
         public init(_ p521: P521.Signing.PrivateKey) {
             self.backing = .p521(p521)
         }
 
         /// Construct a private key wrapping a RSA private key.
         /// - Parameter rsa: The RSA private key to wrap.
-        @inlinable
         public init(_ rsa: _RSA.Signing.PrivateKey) {
             self.backing = .rsa(rsa)
         }
 
         /// Construct a private key wrapping an Ed25519 private key.
         /// - Parameter ed25519: The Ed25519 private key to wrap.
-        @inlinable
         public init(_ ed25519: Curve25519.Signing.PrivateKey) {
             self.backing = .ed25519(ed25519)
         }
@@ -78,14 +70,12 @@ extension Certificate {
         #if canImport(Darwin)
         /// Construct a private key wrapping a SecureEnclave.P256 private key.
         /// - Parameter secureEnclaveP256: The SecureEnclave.P256 private key to wrap.
-        @inlinable
         public init(_ secureEnclaveP256: SecureEnclave.P256.Signing.PrivateKey) {
             self.backing = .secureEnclaveP256(secureEnclaveP256)
         }
 
         /// Construct a private key wrapping a SecKey private key.
         /// - Parameter secKey: The SecKey private key to wrap.
-        @inlinable
         public init(_ secKey: SecKey) throws {
             self.backing = .secKey(try SecKeyWrapper(key: secKey))
         }
@@ -97,7 +87,6 @@ extension Certificate {
         ///   - bytes: The data to create the signature for.
         ///   - signatureAlgorithm: The signature algorithm to use.
         /// - Returns: The signature.
-        @inlinable
         public func sign<Bytes: DataProtocol>(
             bytes: Bytes,
             signatureAlgorithm: SignatureAlgorithm
@@ -124,7 +113,6 @@ extension Certificate {
 
         /// Obtain the ``Certificate/PublicKey-swift.struct`` corresponding to
         /// this private key.
-        @inlinable
         public var publicKey: PublicKey {
             switch self.backing {
             case .p256(let p256):
@@ -145,8 +133,6 @@ extension Certificate {
                 return PublicKey(ed25519.publicKey)
             }
         }
-
-        @inlinable
         var defaultSignatureAlgorithm: SignatureAlgorithm {
             switch backing {
             case .p256:
@@ -214,7 +200,6 @@ extension Certificate.PrivateKey: CustomStringConvertible {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension Certificate.PrivateKey {
-    @usableFromInline
     enum BackingPrivateKey: Hashable, Sendable {
         case p256(Crypto.P256.Signing.PrivateKey)
         case p384(Crypto.P384.Signing.PrivateKey)
@@ -225,8 +210,6 @@ extension Certificate.PrivateKey {
         case secKey(SecKeyWrapper)
         #endif
         case ed25519(Crypto.Curve25519.Signing.PrivateKey)
-
-        @inlinable
         static func == (lhs: BackingPrivateKey, rhs: BackingPrivateKey) -> Bool {
             switch (lhs, rhs) {
             case (.p256(let l), .p256(let r)):
@@ -249,8 +232,6 @@ extension Certificate.PrivateKey {
                 return false
             }
         }
-
-        @inlinable
         func hash(into hasher: inout Hasher) {
             switch self {
             case .p256(let digest):
@@ -284,21 +265,12 @@ extension Certificate.PrivateKey {
 
 @available(macOS 11.0, iOS 14, tvOS 14, watchOS 7, macCatalyst 14, visionOS 1.0, *)
 extension Certificate.PrivateKey {
-    @inlinable
     static var pemDiscriminatorForRSA: String { "RSA PRIVATE KEY" }
-
-    @inlinable
     static var pemDiscriminatorForSEC1: String { "EC PRIVATE KEY" }
-
-    @inlinable
     static var pemDiscriminatorForPKCS8: String { "PRIVATE KEY" }
-
-    @inlinable
     public init(pemEncoded: String) throws {
         try self.init(pemDocument: PEMDocument(pemString: pemEncoded))
     }
-
-    @inlinable
     public init(pemDocument: PEMDocument) throws {
         switch pemDocument.discriminator {
         case Self.pemDiscriminatorForRSA:
@@ -318,8 +290,6 @@ extension Certificate.PrivateKey {
             )
         }
     }
-
-    @inlinable
     init(ecdsaAlgorithm: AlgorithmIdentifier?, rawEncodedPrivateKey: ArraySlice<UInt8>) throws {
         switch ecdsaAlgorithm {
         case .some(.ecdsaP256):
@@ -334,8 +304,6 @@ extension Certificate.PrivateKey {
             )
         }
     }
-
-    @inlinable
     public func serializeAsPEM() throws -> PEMDocument {
         switch backing {
         case .p256(let key): return try PEMDocument(pemString: key.pemRepresentation)

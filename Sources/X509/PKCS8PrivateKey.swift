@@ -46,20 +46,12 @@ import SwiftASN1
 //
 // We disregard the attributes because we don't support them anyway.
 //
-@usableFromInline
 struct PKCS8PrivateKey: DERImplicitlyTaggable, Sendable {
-    @inlinable
     static var defaultIdentifier: ASN1Identifier {
         return .sequence
     }
-
-    @usableFromInline
     var algorithm: AlgorithmIdentifier
-
-    @usableFromInline
     var privateKey: ASN1OctetString
-
-    @inlinable
     init(derEncoded rootNode: ASN1Node, withIdentifier identifier: ASN1Identifier) throws {
         self = try DER.sequence(rootNode, identifier: identifier) { nodes in
             let version = try Int(derEncoded: &nodes)
@@ -76,14 +68,10 @@ struct PKCS8PrivateKey: DERImplicitlyTaggable, Sendable {
             return .init(algorithm: algorithm, privateKey: privateKeyBytes)
         }
     }
-
-    @inlinable
     init(algorithm: AlgorithmIdentifier, privateKey: ASN1OctetString) {
         self.privateKey = privateKey
         self.algorithm = algorithm
     }
-
-    @inlinable
     func serialize(into coder: inout DER.Serializer, withIdentifier identifier: ASN1Identifier) throws {
         try coder.appendConstructedNode(identifier: identifier) { coder in
             try coder.serialize(0)  // version

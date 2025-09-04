@@ -20,13 +20,9 @@ import Foundation
 import SwiftASN1
 
 /// A sub-policy of the ``RFC5280Policy`` that polices expiry.
-@usableFromInline
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 struct ExpiryPolicy: VerifierPolicy, Sendable {
-    @usableFromInline
     let verifyingCriticalExtensions: [ASN1ObjectIdentifier] = []
-
-    @usableFromInline
     let fixedValidationTime: GeneralizedTime?
 
     /// Creates an instance with an optional *fixed* expiry validation time.
@@ -37,12 +33,9 @@ struct ExpiryPolicy: VerifierPolicy, Sendable {
     ///
     /// - Important: Pass `nil` to `fixedValidationTime` for the current time to be obtained at the time of validation and then used for the
     ///   comparison; the validation method may be invoked long after initialization.
-    @inlinable
     init(fixedValidationTime: Date? = nil) {
         self.fixedValidationTime = fixedValidationTime.map(GeneralizedTime.init)
     }
-
-    @inlinable
     func chainMeetsPolicyRequirements(chain: UnverifiedCertificateChain) -> PolicyEvaluationResult {
         // Obtain the current time if self.fixedValidationTime is nil.
         let validationTime = self.fixedValidationTime ?? GeneralizedTime(Date())

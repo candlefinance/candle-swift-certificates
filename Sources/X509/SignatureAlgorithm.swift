@@ -23,10 +23,7 @@ extension Certificate {
     /// signature algorithms. Users are able to create representations of the signature
     /// algorithms this library supports by using static fields on this type.
     public struct SignatureAlgorithm {
-        @usableFromInline
         var _algorithmIdentifier: AlgorithmIdentifier
-
-        @inlinable
         init(algorithmIdentifier: AlgorithmIdentifier) {
             switch algorithmIdentifier {
             // Per RFC 4055 § 5, we need to accept the RSA parameters field being
@@ -70,7 +67,6 @@ extension Certificate {
         public static let ed25519 = Self(algorithmIdentifier: .ed25519)
 
         /// Whether this algorithm represents an ECDSA signature.
-        @inlinable
         var isECDSA: Bool {
             switch self {
             case .ecdsaWithSHA256, .ecdsaWithSHA384, .ecdsaWithSHA512:
@@ -79,8 +75,6 @@ extension Certificate {
                 return false
             }
         }
-
-        @inlinable
         var isRSA: Bool {
             switch self {
             case .sha1WithRSAEncryption, .sha256WithRSAEncryption, .sha384WithRSAEncryption, .sha512WithRSAEncryption:
@@ -127,12 +121,9 @@ extension Certificate.SignatureAlgorithm: CustomStringConvertible {
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension AlgorithmIdentifier {
-    @inlinable
     init(_ signatureAlgorithm: Certificate.SignatureAlgorithm) {
         self = signatureAlgorithm._algorithmIdentifier
     }
-
-    @inlinable
     init(digestAlgorithmFor signatureAlgorithm: Certificate.SignatureAlgorithm) throws {
         // Per RFC 5754 § 2, we must produce digest algorithm identifiers with
         // absent parameters, so we do.
