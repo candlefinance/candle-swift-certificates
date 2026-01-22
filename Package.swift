@@ -30,7 +30,7 @@ let package = Package(
             dependencies: [
                 "_CertificateInternals",
                 .product(name: "SwiftASN1", package: "swift-asn1"),
-                .product(name: "Crypto", package: "swift-crypto"),
+                .product(name: "CandleCrypto", package: "swift-crypto"),
                 .product(name: "_CryptoExtras", package: "swift-crypto"),
             ],
             exclude: [
@@ -42,7 +42,7 @@ let package = Package(
             dependencies: [
                 "X509",
                 .product(name: "SwiftASN1", package: "swift-asn1"),
-                .product(name: "Crypto", package: "swift-crypto"),
+                .product(name: "CandleCrypto", package: "swift-crypto"),
             ],
             resources: [
                 .copy("OCSP Test Resources/www.apple.com.root.der"),

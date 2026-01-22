@@ -17,7 +17,7 @@ import FoundationEssentials
 #else
 import Foundation
 #endif
-@preconcurrency import Crypto
+@preconcurrency import CandleCrypto
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 enum Digest: Sendable {
     case insecureSHA1(Insecure.SHA1Digest)

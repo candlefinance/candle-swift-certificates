@@ -15,7 +15,7 @@
 import Benchmark
 import X509
 import Foundation
-import Crypto
+import CandleCrypto
 import SwiftASN1
 
 public func verifier() async {

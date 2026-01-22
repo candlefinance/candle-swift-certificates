@@ -17,7 +17,7 @@ import FoundationEssentials
 import Foundation
 #endif
 import SwiftASN1
-import Crypto
+import CandleCrypto
 
 /// An ECDSA signature is laid out as follows:
 ///

@@ -13,7 +13,7 @@
 //===----------------------------------------------------------------------===//
 
 import SwiftASN1
-@preconcurrency import Crypto
+@preconcurrency import CandleCrypto
 import _CryptoExtras
 #if canImport(FoundationEssentials)
 import FoundationEssentials
@@ -171,9 +171,9 @@ extension Certificate.PublicKey: CustomStringConvertible {
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension Certificate.PublicKey {
     enum BackingPublicKey: Hashable, Sendable {
-        case p256(Crypto.P256.Signing.PublicKey)
-        case p384(Crypto.P384.Signing.PublicKey)
-        case p521(Crypto.P521.Signing.PublicKey)
+        case p256(CandleCrypto.P256.Signing.PublicKey)
+        case p384(CandleCrypto.P384.Signing.PublicKey)
+        case p521(CandleCrypto.P521.Signing.PublicKey)
         case rsa(_CryptoExtras._RSA.Signing.PublicKey)
         case ed25519(Curve25519.Signing.PublicKey)
         static func == (lhs: BackingPublicKey, rhs: BackingPublicKey) -> Bool {

@@ -18,7 +18,7 @@ import FoundationEssentials
 #else
 import Foundation
 #endif
-@preconcurrency import Crypto
+@preconcurrency import CandleCrypto
 import _CryptoExtras
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
@@ -201,15 +201,15 @@ extension Certificate.PrivateKey: CustomStringConvertible {
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, macCatalyst 13, visionOS 1.0, *)
 extension Certificate.PrivateKey {
     enum BackingPrivateKey: Hashable, Sendable {
-        case p256(Crypto.P256.Signing.PrivateKey)
-        case p384(Crypto.P384.Signing.PrivateKey)
-        case p521(Crypto.P521.Signing.PrivateKey)
+        case p256(CandleCrypto.P256.Signing.PrivateKey)
+        case p384(CandleCrypto.P384.Signing.PrivateKey)
+        case p521(CandleCrypto.P521.Signing.PrivateKey)
         case rsa(_CryptoExtras._RSA.Signing.PrivateKey)
         #if canImport(Darwin)
         case secureEnclaveP256(SecureEnclave.P256.Signing.PrivateKey)
         case secKey(SecKeyWrapper)
         #endif
-        case ed25519(Crypto.Curve25519.Signing.PrivateKey)
+        case ed25519(CandleCrypto.Curve25519.Signing.PrivateKey)
         static func == (lhs: BackingPrivateKey, rhs: BackingPrivateKey) -> Bool {
             switch (lhs, rhs) {
             case (.p256(let l), .p256(let r)):

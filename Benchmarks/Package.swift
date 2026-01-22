@@ -33,7 +33,7 @@ let package = Package(
                 .product(name: "Benchmark", package: "package-benchmark"),
                 .product(name: "X509", package: "swift-certificates"),
                 .product(name: "SwiftASN1", package: "swift-asn1"),
-                .product(name: "Crypto", package: "swift-crypto"),
+                .product(name: "CandleCrypto", package: "swift-crypto"),
             ],
             path: "Benchmarks/CertificatesBenchmark",
             resources: [

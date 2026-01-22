@@ -19,7 +19,7 @@ import FoundationEssentials
 #else
 import Foundation
 #endif
-@preconcurrency import Crypto
+@preconcurrency import CandleCrypto
 @preconcurrency import _CryptoExtras
 @preconcurrency import Security
 

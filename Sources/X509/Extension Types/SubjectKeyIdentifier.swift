@@ -13,7 +13,7 @@
 //===----------------------------------------------------------------------===//
 
 import SwiftASN1
-import Crypto
+import CandleCrypto
 import struct Foundation.Data
 
 /// Provides a means of identifying a certificate that contains a particular public key.

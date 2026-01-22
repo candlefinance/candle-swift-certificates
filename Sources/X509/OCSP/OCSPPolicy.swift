@@ -13,7 +13,7 @@
 //===----------------------------------------------------------------------===//
 
 import SwiftASN1
-import Crypto
+import CandleCrypto
 #if canImport(FoundationEssentials)
 import FoundationEssentials
 #else
