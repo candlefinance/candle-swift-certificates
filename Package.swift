@@ -18,56 +18,8 @@ import class Foundation.ProcessInfo
 
 let package = Package(
     name: "candle-swift-certificates",
-    products: [
-        .library(
-            name: "X509",
-            targets: ["X509"]
-        )
-    ],
-    targets: [
-        .target(
-            name: "X509",
-            dependencies: [
-                "_CertificateInternals",
-                .product(name: "SwiftASN1", package: "candle-swift-asn1"),
-                .product(name: "CandleCrypto", package: "candle-swift-crypto"),
-                .product(name: "_CryptoExtras", package: "candle-swift-crypto"),
-            ],
-            exclude: [
-                "CMakeLists.txt"
-            ]
-        ),
-        .testTarget(
-            name: "X509Tests",
-            dependencies: [
-                "X509",
-                .product(name: "SwiftASN1", package: "candle-swift-asn1"),
-                .product(name: "CandleCrypto", package: "candle-swift-crypto"),
-            ],
-            resources: [
-                .copy("OCSP Test Resources/www.apple.com.root.der"),
-                .copy("OCSP Test Resources/www.apple.com.intermediate.der"),
-                .copy("OCSP Test Resources/www.apple.com.der"),
-                .copy("OCSP Test Resources/www.apple.com.ocsp-response.der"),
-                .copy("OCSP Test Resources/www.apple.com.intermediate.ocsp-response.der"),
-                .copy("PEMTestRSACertificate.pem"),
-                .copy("CSR Vectors/"),
-                .copy("ca-certificates.crt"),
-            ]
-        ),
-        .target(
-            name: "_CertificateInternals",
-            exclude: [
-                "CMakeLists.txt"
-            ]
-        ),
-        .testTarget(
-            name: "CertificateInternalsTests",
-            dependencies: [
-                "_CertificateInternals"
-            ]
-        ),
-    ]
+    products: [],
+    targets: []
 )
 
 // If the `SWIFTCI_USE_LOCAL_DEPS` environment variable is set,
