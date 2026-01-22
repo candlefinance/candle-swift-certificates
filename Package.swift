@@ -17,7 +17,7 @@ import PackageDescription
 import class Foundation.ProcessInfo
 
 let package = Package(
-    name: "swift-certificates",
+    name: "candle-swift-certificates",
     products: [
         .library(
             name: "X509",
