@@ -29,9 +29,9 @@ let package = Package(
             name: "X509",
             dependencies: [
                 "_CertificateInternals",
-                .product(name: "SwiftASN1", package: "swift-asn1"),
-                .product(name: "CandleCrypto", package: "swift-crypto"),
-                .product(name: "_CryptoExtras", package: "swift-crypto"),
+                .product(name: "SwiftASN1", package: "candle-swift-asn1"),
+                .product(name: "CandleCrypto", package: "candle-swift-crypto"),
+                .product(name: "_CryptoExtras", package: "candle-swift-crypto"),
             ],
             exclude: [
                 "CMakeLists.txt"
@@ -41,8 +41,8 @@ let package = Package(
             name: "X509Tests",
             dependencies: [
                 "X509",
-                .product(name: "SwiftASN1", package: "swift-asn1"),
-                .product(name: "CandleCrypto", package: "swift-crypto"),
+                .product(name: "SwiftASN1", package: "candle-swift-asn1"),
+                .product(name: "CandleCrypto", package: "candle-swift-crypto"),
             ],
             resources: [
                 .copy("OCSP Test Resources/www.apple.com.root.der"),
@@ -75,13 +75,13 @@ let package = Package(
 // we can depend on local versions of our dependencies instead of fetching them remotely.
 if ProcessInfo.processInfo.environment["SWIFTCI_USE_LOCAL_DEPS"] == nil {
     package.dependencies += [
-        .package(url: "https://github.com/candlefinance/swift-crypto.git", branch: "fix-candle-3.12.3"),
-        .package(url: "https://github.com/candlefinance/swift-asn1.git", branch: "fix-candle-1.3.2"),
+        .package(url: "https://github.com/candlefinance/swift-crypto.git", name: "candle-swift-crypto", branch: "fix-candle-3.12.3"),
+        .package(url: "https://github.com/candlefinance/swift-asn1.git", name: "candle-swift-asn1", branch: "fix-candle-1.3.2"),
     ]
 } else {
     package.dependencies += [
-        .package(path: "../swift-crypto"),
-        .package(path: "../swift-asn1"),
+        .package(path: "../swift-crypto", name: "candle-swift-crypto"),
+        .package(path: "../swift-asn1", name: "candle-swift-asn1"),
     ]
 }
 
