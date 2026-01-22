@@ -27,13 +27,13 @@ let package = Package(
 // we can depend on local versions of our dependencies instead of fetching them remotely.
 if ProcessInfo.processInfo.environment["SWIFTCI_USE_LOCAL_DEPS"] == nil {
     package.dependencies += [
-        .package(name: "candle-swift-crypto", url: "https://github.com/candlefinance/candle-swift-crypto.git", branch: "fix-candle-3.12.3"),
-        .package(name: "candle-swift-asn1", url: "https://github.com/candlefinance/candle-swift-asn1.git", branch: "fix-candle-1.3.2"),
+        .package(url: "https://github.com/candlefinance/candle-swift-crypto.git", branch: "fix-candle-3.12.3"),
+        .package(url: "https://github.com/candlefinance/candle-swift-asn1.git", branch: "fix-candle-1.3.2"),
     ]
 } else {
     package.dependencies += [
-        .package(name: "candle-swift-crypto", path: "../swift-crypto"),
-        .package(name: "candle-swift-asn1", path: "../swift-asn1"),
+        .package(path: "../swift-crypto"),
+        .package(path: "../swift-asn1"),
     ]
 }
 
